@@ -4,11 +4,11 @@ def makeChange(strChange):
 	intDollars, intChange = int(intDollars), int(intChange)
 	lstChange = [0,0,0,0,0,0,0,0,0,0]
 	lstDollarDenom, lstChangeDenom = subdivideDollars(intDollars), subdivideChange(intChange)
-	for idx in range(0, 11):
+	for idx in range(0, 10):
 		if idx < 6:
 			lstChange[idx] = lstDollarDenom[idx]
 		else:
-			lstChange[idx] = lstChangeDenom[idx]
+			lstChange[idx] = lstChangeDenom[idx - 6]
 	return lstChange
 
 
@@ -17,16 +17,22 @@ def subdivideDollars(intDollars):
 	while intDollars > 0:
 		if intDollars - 100 >= 0:
 			intHundreds += 1
+			intDollars -= 100
 		elif intDollars - 50 >= 0:
 			intFifties += 1
+			intDollars -= 50
 		elif intDollars - 20 >= 0:
 			intTwenties += 1
+			intDollars -= 20
 		elif intDollars - 10 >= 0:
 			intTens += 1
+			intDollars -= 10
 		elif intDollars - 5 >= 0:
 			intFives += 1
+			intDollars -= 5
 		elif intDollars - 1 >= 0:
 			intSingles += 1
+			intDollars -= 1
 	lstDenominations = [intHundreds, intFifties, intTwenties, intTens, intFives, intSingles]
 	return lstDenominations
 
@@ -35,18 +41,22 @@ def subdivideChange(intChange):
 	while intChange > 0:
 		if intChange - 25 >= 0:
 			intQuarters += 1
+			intChange -= 25
 		elif intChange - 10 >= 0:
 			intDimes += 1
+			intChange -= 10
 		elif intChange - 5 >= 0:
 			intNickels += 1
+			intChange -= 5
 		elif intChange - 1>= 0:
 			intPennies += 1
+			intChange -= 1
 	lstDenominations = [intQuarters, intDimes, intNickels, intPennies]
 	return lstDenominations
 
 def main():
 	dictIO = {1: "Welcome to the make change algorithm.\n",\
-	2: "Please type in the amount of money you would like to make change for:\n", 3:"You will need:", \
+	2: "Please type in the amount of money you would like to make change for.\nThe format is XXXX.YY:\n", 3:"You will need:", \
 	4: " one hundred dollar bill(s)", 5:" fifty dollar bill(s)", \
 	6: " twenty dollar bill(s)", 7:" ten dollar bill(s)",\
 	8:" five dollar bill(s)", 9:" one dollar bill(s)", \
@@ -61,7 +71,7 @@ def main():
 			print(dictIO[3])
 			for idx in range(0, len(lstChange)):
 				if lstChange[idx] != 0:
-					print(dictIO[idx + 4])
+					print(str(lstChange[idx]) + dictIO[idx + 4])
 		except ValueError:
 			print(dictIO[17])
 		except Exception as e:
