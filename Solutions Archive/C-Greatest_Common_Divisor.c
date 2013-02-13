@@ -54,25 +54,33 @@ int main(void)
 	
 int GCD(int a, int b)
 {
-	int c = 0;
-	int a1, b1;
-	if (a > b) 
+	if (a == 0 || b == 0)
 	{
-		a1 = a;
-		b1 = b;
+		return 0;
 	}
-	else 
+	else
 	{
-		a1 = b;
-		b1 = a;
- 	}		
-	if (b == 0) 
-	{
-		return a;
-	}
-	else if (a != 0 && b != 0)
-	{
-		c = a % b;
-		return GCD(b, c);
+		int c = 0;
+		int a1, b1;
+
+		if (a > b) 
+		{
+			a1 = a;
+			b1 = b;
+		}
+
+		else 
+		{
+			a1 = b;
+			b1 = a;
+ 		}
+		
+		while (b1 != 0)
+		{
+			c = a1 % b1;
+			a1 = b1;
+			b1 = c;
+		}
+		return a1;
 	}
 }	 
