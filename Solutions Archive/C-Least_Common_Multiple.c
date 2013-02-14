@@ -12,7 +12,7 @@
 #include <stdio.h>
 
 int main(void) {
-	int a,b,c,d,e;
+	int a,b,c;
 	char input[3], continueChar;
 	int isLoop =1;
 	printf("Welcome to the least common multiple program!\n");
@@ -28,15 +28,12 @@ int main(void) {
 		fflush(NULL);
 		
 		if (a == 0 || b == 0) {
-			e = 0;
+			c = 0;
 		}
 		else {
-			c = a * b;
-			c = absVal(c);
-			d = GCD(a,b);
-			e = c / d;
+			c = LCM(a,b) 
 		}	
-		printf("The LCM of %i and %i is %i.\n", a,b,e);
+		printf("The LCM of %i and %i is %i.\n", a,b,c);
 		printf("Would you like to continue? [y/n]\n");
 		scanf("%s", &continueChar);
 		if (continueChar != 'y') {
@@ -47,7 +44,14 @@ int main(void) {
 	return 0;
 }
 
-
+int LCM(int a, int b) {
+	int c, d, e;
+	c = a * b;
+	c = absVal(c);
+	d = GCD(a,b);
+	e = c / d;
+	return e;
+}
 		
 
 int absVal(int n) {
