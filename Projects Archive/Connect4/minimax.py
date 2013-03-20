@@ -20,8 +20,8 @@ class MinimaxNode(ConnectFour):
 		
 		#Copy board in copyfrom -> node.curBoard
 		node.board = []
-		for row in copyfrom.board:
-			curRow = row
+		for row in range(len(copyfrom.board)):
+			curRow = copyfrom.board[row]
 			node.board.append(curRow)
 		
 		#set node.nodePlayer of root	
@@ -50,8 +50,8 @@ class MinimaxNode(ConnectFour):
 		
 		#copy board from parent
 		node.board = []
-		for row in parent.board:
-			curRow = row
+		for row in range(len(parent.board)):
+			curRow = parent.board[row]
 			node.board.append(curRow)
 		
 		#set node.nodePlayer to opposite of parent
@@ -79,7 +79,7 @@ class MinimaxNode(ConnectFour):
 		#initialize children for each available column
 		self.children = []		
 		for val in  lstPossible:
-			self.children.append(init_child(self, val))
+			self.children.append(self.init_child(self, val))
 		
 
 	def set_minimax_value(self, val):

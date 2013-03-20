@@ -189,19 +189,3 @@ def play_game(board, player1, player2):
 		else:
 			turn += 1
 
-game1 = ConnectFour()
-player1 = Human(1)
-player2 = RandomPlayer(2)
-play_game(game1,player1, player2)
-
-
-'''
-game1.random_unit_test()
-game1.print_board()
-game1.is_game_over()
-
-game2 = ConnectFour()
-
-player1 = Human(1)
-player1.play_turn(game2)
-'''
