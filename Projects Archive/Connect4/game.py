@@ -24,6 +24,39 @@ class ConnectFour(object):
 		else:
 			return None
 
+	def mod_match_in_direction(self, row, column, step_row, step_col):
+		"""
+		This version of match_in_direction will return the longest possible streak <= 4
+
+		This version is necessary as the original function is being utilized to exclusively
+		check for victory conditions.		
+		"""
+		assert row >= 0 and row < 6 and column >= 0 and column < 7
+		assert step_row != 0 or step_col != 0 # (0,0) gives an infinite loop
+
+		if self.get_position(row,column) != None:
+			c = self.get_position(row,column)
+			i = row
+			j = column
+			streak = 1
+			for k in range(3):
+				if i + step_row > 5 or j + step_col > 6 or i + step_row < 0 or j + step_col < 0:
+					return streak
+				
+				if self.get_position(i + step_row,j + step_col) != c:
+					return streak
+				elif self.get_position(i + step_row, j + step_col) == c:
+					streak += 1
+				
+				i += step_row
+				j += step_col
+				
+			return streak
+		
+		else:
+		
+			return 1
+
 	def match_in_direction(self, row, column, step_row, step_col):
 		"""
 		Counts how many chips, starting from (row, column) and moving in the
