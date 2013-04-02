@@ -1,0 +1,50 @@
+Investigations of Connect4 Project
+
+1. Question: Run minimax with a ply depth of two and SimpleUtility(5,1) against the random player. Does minimax always appear to win in four or five moves?
+   Answer: It does appear that Minimax often wins in 4 or 5 moves, but the game length is variable. For example, I observed a game that ran to to ply 30 (i.e. move 15 for minimax player).
+           Out of 15 trials minimax player won 100% of the time, but the game lengths varied. This is as would be expected when playing a random player since the random player
+           randomly chooses a row and can sometimes pose a threat to minimax player and can sometimes block minimax player from a victory.
+
+
+2. Question: Play as a human against the minimax player with a ply depth of two and SimpleUtility(5,1). Can you beat the minimax player and does it detect that you are about to win?
+	Answer: Minimax player always detects when I am going to win and blocks simple victories. Out of an attempted 5 games, I was able to beat the minimax
+	        player on 2 out of 5 times when I was able to force minimax player into blocking a simple victory just to lose to another possible victory location.
+	        
+3. Question: Increase the ply depth to 3. Can you still beat the minimax player?
+    Answer: By increasing the ply depth to 3, I was able to beat the minimax player using vanilla SimpleUtility. It was simple to win as the extra ply would mean that the minimax
+            player would not check to see if I was going to be playing a winning move. I altered the SimpleUtility function to add or subtract the loss or win score and to more heavily
+            weight a loss than a win. This was important, because the simple utility function would somtimes evaluate to a win with an extra ply when I had already won. Additionally,
+            heavily weighting the loss ply meant that even if the minimax player was able to achieve a victory with an extra ply, but still lost the game then the loss would still be 
+            reflected instead of netting out to a zero utility. With the proposed changes implemented I was not able to beat minimax player.
+
+4. Question: Increase the ply depth to 4. Can you still beat the minimax player?
+   Answer: As above, without implementing the changes stated above, I was able to achieve a few simple victories against minimax player with a ply depth of 4. With the proposed 
+           and implemented changes to the utility function I was not able to win.
+   
+5. Question: Have a minimax player with ply depth 3 v. a minimax player with ply depth 2. Who wins? Does it matter who goes first?
+   Answer: In my trials, the game ended in a draw in both variations. Minimax player with ply depth 2 won when it was going first or second.
+           In the latter case, there is not any veriability in the chosen board positions, so it is difficult to claim that the
+           probability of winning is not dependant on ply depth.
+
+6. Question: Have a minimax player with ply depth 4 v. a minimax player with ply depth 2. Who wins? Does the order matter?
+   Answer: In my trials, the game ended in a draw
+
+7. Question: Try out different utility values.
+   Answer: I tried the following combinations with two minimax players with the same ply depth:
+           1. Minimax player 1 -- (500, 1) v. Minimax player 2 -- (5, 1)
+		In this trial, minimax player 2 won.
+	   2. Minimax player 1 -- (5 , 1) v. Minimax player 2 -- (500 ,1)
+		In this trial, minimax player 1 won.
+	   3. Minimax player 1 -- (5, 1) v. Minimax player 2 -- (1, 5)
+		In this trial, minimax player 1 won.
+	   4. Minimax player 1 -- (1, 5) v. Minimax player 2 -- (5, 1)
+		In this trial, minimax player 2 won.
+	   It seems that the best utility combinations are those that center around the (5,1) benchmark. Those utility 
+	   values that are two greatly different do not seem to contribute to a victory.
+
+8. Question: Add the WithColumnUtility functionality. Can you still beat Minimax?
+   Answer: Out of 5 games played against minimax player using the WithColumnUtility, I was unable to beat minimax player.
+
+9. Question: Experiment with minimax player using WithColumnUtility v. minimax player using SimpleUtility. Who wins?
+   Answer: minimax player using withColumnUtility won on all occasions. Minimax player using WithColumnUtility using a ply depth of 2
+           was able to beat a minimax player using SimpleUtility and a ply  depth of 4.

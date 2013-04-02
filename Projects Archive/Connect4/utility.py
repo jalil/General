@@ -2,12 +2,12 @@ from game import *
 from minimax import *
 
 class Utility(object):
-def compute_utility(self, node, utilityplayer):
-		"""
-		Computes the utility of node with positive values good for utilityplayer
-		and negative values good for the other player.
-		"""
-		pass
+	def compute_utility(self, node, utilityplayer):
+			"""
+			Computes the utility of node with positive values good for utilityplayer
+			and negative values good for the other player.
+			"""
+			pass
 
 class SimpleUtility(Utility):
 	def __init__(self, three_score, two_score):
@@ -35,20 +35,48 @@ class SimpleUtility(Utility):
 		lstDirs = [(-1,0),(1,0),(0,1),(0,-1),(1,1),(-1,-1),(-1,1),(1,-1)]		
 		for i in range(6):
 			for j in range(7):
-				for dir in lstDirs:
-					dirUtil = node.mod_match_in_direction(i,j,dir[0],dir[1])
-					if dirUtil == 2:
-						self.two_score += 1
-					elif dirUtil == 3:
-						self.three_score += 1
-					elif dirUtil == 4:
-						self.
-											
-		if node.nodeplayer != utilityplayer:
-			
+				cellPlayer = node.get_position(i,j)
+				if cellPlayer != None:
+					for dir in lstDirs:
+						dirUtil = node.mod_match_in_direction(i,j,dir[0],dir[1])
+						if cellPlayer == utilityplayer:
+							if dirUtil == 2:
+								utilityVal += self.two_score
+							elif dirUtil == 3:
+								utilityVal += self.three_score 
+							elif dirUtil >= 4:
+								utilityVal += 1000000
+						elif cellPlayer != utilityplayer:
+							if dirUtil == 2:
+								utilityVal -= self.two_score
+							elif dirUtil == 3:
+								utilityVal -= self.three_score
+							elif dirUtil >= 4:
+								utilityVal += -10000000
+		
+		#changed to node.parent.nodePlayer because it more accurately reflects the move advantage
+		if utilityplayer == node.parent.nodePlayer:
+			utilityVal += 1
+		else:
+			utilityVal -= 1
+		return utilityVal
 
-		# The match_in_direction function is very helpful here.  You will need to
-		# loop through positions, adding up the score for various three or two in a
-		# rows for each player.
 
-		# TODO: write me
+
+class WithColumnUtility(SimpleUtility):
+	def __init__(self, three_score, two_score, column_scores):
+		self.three_score = three_score
+		self.two_score = two_score
+		self.column_scores = column_scores
+
+	def compute_utility(self,node,utilityplayer):
+		score = super(WithColumnUtility, self).compute_utility(node, utilityplayer)
+		
+		for i in range(6):
+			cellPlayer = node.get_position(i,3)
+			if cellPlayer != None:
+				if cellPlayer == utilityplayer:
+					score += self.column_scores
+				else:
+					score -= self.column_scores
+		return score
