@@ -7,6 +7,14 @@ class ConnectFour(object):
 			self.board.append([])
 			for j in range(7):
 				self.board[i].append(None)
+	def is_draw(self):
+		for j in range(7):
+			if self.board[5][j] != None:
+				continue
+			else:
+				return True
+
+		return False
 
 	def get_position(self, row, column):
 		"""
@@ -112,8 +120,8 @@ class ConnectFour(object):
 						return self.match_in_direction(i,j,dir[0], dir[1])
 
 	def play_turn(self, player, column):
-		""" Updates the board so that player plays in the given column.
-
+		""" 
+		Updates the board so that player plays in the given column.
 		player: either 1 or 2
 		column: an integer between 0 and 6
 		"""
@@ -131,6 +139,12 @@ class ConnectFour(object):
 					self.board[i][column] = 'O'
 					break
 
+	def getFullCols(self):
+		lstFull = []
+		for i in range(0, 7):
+			if self.board[5][i] != None:
+				lstFull.append(i)
+		return lstFull
 
 	def print_board(self):
 		print "-" * 29
@@ -181,9 +195,15 @@ class RandomPlayer(Player):
 		print("It is random player number %d's turn!\n" %self.playernum)
 		print("*" * 9) + "Before Turn" + ("*" * 9)
 		board.print_board()
-		board.play_turn(self.playernum, random.randint(1,6))
+		while 1:
+			col = random.randint(1,6)
+			if col not in board.getFullCols():
+				break
+		board.play_turn(self.playernum, col)
 		print("*" * 9) + "After Turn" + ("*" * 9)
 		board.print_board()
+
+
 class Human(Player):
 	def __init__(self,playernum):
 		self.playernum = playernum
@@ -195,7 +215,8 @@ class Human(Player):
 			isLoop = True
 			while isLoop == True:
 				col = raw_input("Type in the column number you would like to put your chip in: ")
-				if len(col) == 1 and col in '1234567890':
+				fullCols = board.getFullCols()
+				if len(col) == 1 and col in '1234567890' and int(col) not in fullCols:
 					col = int(col)
 					print ("*" * 9) + "After Turn" + ("*" * 9)
 					board.play_turn(self.playernum, col)
@@ -217,8 +238,11 @@ def play_game(board, player1, player2):
 			player2.play_turn(board)
 			
 		if board.is_game_over() != None:
-				print("Player %d has won the game!\n" %board.is_game_over())
-				break
+			print("Player %d has won the game!\n" %board.is_game_over())
+			break
+		#elif board.is_draw() == True:
+		#	print("The game is a draw")
+			#break
 		else:
 			turn += 1
 

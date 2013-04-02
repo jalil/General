@@ -20,10 +20,11 @@ class MinimaxNode(ConnectFour):
 		
 		#Copy board in copyfrom -> node.curBoard
 		node.board = []
-		for row in range(len(copyfrom.board)):
-			curRow = copyfrom.board[row]
-			node.board.append(curRow)
-		
+		for i in range(len(copyfrom.board)):
+			row = []
+			for j in range(len(copyfrom.board[i])):
+				row.append(copyfrom.board[i][j])
+			node.board.append(row)
 		#set node.nodePlayer of root	
 		node.nodePlayer = nodeplayer
 		
@@ -47,13 +48,7 @@ class MinimaxNode(ConnectFour):
 		at the very end to know which play to make.
 		"""
 		node = MinimaxNode()
-		
-		#copy board from parent
-		node.board = []
-		for row in range(len(parent.board)):
-			curRow = parent.board[row]
-			node.board.append(curRow)
-		
+		node.parent = parent
 		#set node.nodePlayer to opposite of parent
 		if parent.nodePlayer == 1:
 			node.nodePlayer = 2
@@ -62,6 +57,22 @@ class MinimaxNode(ConnectFour):
 			
 		#set node.from_parent_column
 		node.from_parent_column = playcolumn
+		
+		#copy board from parent
+		node.board = []
+		for i in range(len(parent.board)):
+			row = []
+			for j in range(len(parent.board[i])):
+				row.append(parent.board[i][j])
+			node.board.append(row)		
+		
+		#print ("**************board memory locs*****************")
+		#print id(node.board)
+		#print id(parent.board)
+		
+		#make play in playcol
+		node.play_turn(node.nodePlayer, playcolumn)
+		
 		
 		return node
 
