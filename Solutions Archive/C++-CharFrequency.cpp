@@ -5,8 +5,6 @@
 using namespace std;
 
 
-void printFreqs(map <char, int> &mFreqs, int len);
-
 int main( int argc, const char *argv[]) {
 	int i;
 	string line;
