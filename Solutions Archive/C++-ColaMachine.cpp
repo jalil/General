@@ -4,7 +4,7 @@ using namespace std;
 
 int main(int argc, const char *argv[]) {
 	int i;
-	cout << "Hi! I'm a soda machine. Here are my choices:\n1 -> Coke\n2 -> Sprite\n3 -> Water\n4 -> Ginger Ale\n5 -> Sam Adams What number do you want?\n->";
+	cout << "Hi! I'm a soda machine. Here are my choices:\n1 -> Coke\n2 -> Sprite\n3 -> Water\n4 -> Ginger Ale\n5 -> Sam Adams\nWhat number do you want?\n->";
 	cin >> i;
 
 	switch(i) {
