@@ -17,6 +17,11 @@ int main( int argc, const char *argv[]) {
 	
 	ifstream myfile(fname.c_str(), ios::in);
 
+	if (!myfile.is_open()) {
+		cout << "An error has occurred while trying to open the file." << endl;
+		return 1;
+	}
+
 	while(getline(myfile, line)) {
 		cont = true;
 		do {
@@ -45,6 +50,7 @@ int main( int argc, const char *argv[]) {
 	}
 
 	cout << "Goodbye!" << endl;
+	myfile.close();
 	return 0;
 }
 

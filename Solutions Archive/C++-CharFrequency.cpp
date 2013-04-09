@@ -23,7 +23,7 @@ int main( int argc, const char *argv[]) {
 	}
 
 	map<char, int>::iterator it;
-	for (map<char, int>::iterator it=freqs.begin(); it!=freqs.end(); it++) {
+	for ( it=freqs.begin(); it!=freqs.end(); it++) {
 		cout << "'" <<  it->first << "'" << " => " << it->second << " freq: " << ((it->second / (double)line.length()) * 100) << "%" << endl;
 	}
 
