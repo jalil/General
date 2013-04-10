@@ -5,10 +5,7 @@ using namespace std;
 int factorial(int n) {
 	int i, o = 1;
 	for (i = n; i > -1; i--) {
-		if (i == 0) {
-			o = o * 1;
-		}
-		else {
+		if (i != 0) {
 			o = o * i;
 		}
 	}
