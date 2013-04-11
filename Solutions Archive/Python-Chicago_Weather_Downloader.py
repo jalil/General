@@ -4,7 +4,6 @@ f = urllib.urlopen('http://weather.noaa.gov//pub/data/forecasts/state/il/ilz013.
 
 lstILWeather = f.readlines()
 
-lstRowsToPrint = []
 	
 print "Prepare for the weather:\n"
 for idx in range(0,len(lstILWeather)):
