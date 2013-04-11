@@ -19,7 +19,6 @@ long double computeEuler(int upperBound) {
 	for (i = 0; i < upperBound; i++) {
 		denom = factorial(i);
 		placeVal = (1/denom);
-		cout << placeVal;
 		e += placeVal;
 	}
 
@@ -34,7 +33,7 @@ int main(int argc, const char *argv[]) {
 	cin >> in;
 
 	out = computeEuler(in);	
-	cout << "Euler's number to with an upper bound of " << in << " is " << out << endl;
+	cout << "Euler's number with an upper bound of " << in << " is " << out << endl;
 	return 0;
 }
 	
