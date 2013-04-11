@@ -2,11 +2,11 @@
 
 using namespace std;
 
-double leibniz(int upperBound) {
+long double leibniz(unsigned long int upperBound) {
 	int i;
-	double pi = 0;
-	double denom = 1;
-	double sequenceVal = 0;
+	long double pi = 0;
+	long double denom = 1;
+	long double sequenceVal = 0;
 
 	for (i = 0; i < upperBound; i++) {
 		//compute place in sequence
@@ -24,8 +24,8 @@ double leibniz(int upperBound) {
 }
 
 int main(int argc, const char *argv[]) {
-	int i;
-	double pi;
+	unsigned long int i;
+	long double pi;
 	
 	cout << "What is the number of places into the sequence that you would like to compute: ";
 	cin >> i;

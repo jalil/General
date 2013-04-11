@@ -2,7 +2,7 @@
 
 using namespace std;
 
-int factorial(int n) {
+unsigned long int factorial(unsigned long int n) {
 	if (n == 0) {
 		return 1;
 	}
@@ -11,12 +11,12 @@ int factorial(int n) {
 	}
 }
 
-int binomialCoefficient(int n, int k) {
+unsigned long int binomialCoefficient(unsigned long int n, unsigned long int k) {
 	return ((factorial(n)) / (factorial(k) * factorial(n - k)));
 }
 
 int main(int argc, const char *argv[]) {
-	int n, k, o;
+	unsigned long int n, k, o;
 	cout << "Please give me the n value: ";
 	cin >> n;
 

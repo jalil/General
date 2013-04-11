@@ -2,7 +2,7 @@
 
 using namespace std;
 
-int factorial(int n) {
+unsigned long int factorial(unsigned long int n) {
 	if (n == 0) {
 		return 1;
 	}
@@ -12,7 +12,7 @@ int factorial(int n) {
 }
 
 int main(int argc, const char *argv[]) {
-	int i,o;
+	unsigned long int i,o;
 	cout << "What factorial would you like to compute: ";
 	cin >> i;
 	

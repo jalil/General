@@ -2,8 +2,8 @@
 
 using namespace std;
 
-int factorial(int n) {
-	int i, o = 1;
+unsigned long int factorial(unsigned long int n) {
+	unsigned long int i, o = 1;
 	for (i = n; i > -1; i--) {
 		if (i != 0) {
 			o = o * i;
@@ -13,7 +13,7 @@ int factorial(int n) {
 }
 
 int main(int argc, const char *argv[]) {
-	int i,o;
+	unsigned long int i,o;
 	cout << "What is the factorial you would like to compute: ";
 	cin >> i;
 	o = factorial(i);
