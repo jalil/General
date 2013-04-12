@@ -38,7 +38,7 @@ double cosine(double x) {
 int main(int argc, const char *argv[]) {
 	double x;
 
-	cout << "What is the value of cosine(x) where x is in radians: ";
+	cout << "What is the value of x where x is in radians: ";
 	cin >> x;	
 	cout << "The value of cosine(" << x << ") is " << cosine(x) << endl;
 
