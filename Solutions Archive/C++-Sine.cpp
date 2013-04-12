@@ -37,7 +37,7 @@ double sine(double x) {
 
 int main(int argc, const char *argv[]) {
 	double o;
-	double  x = 0.5 *3.14159;
+	double  x = 1.5 *3.14159;
 	o = sine(x);
 	cout << "We had " << x << " which became " << o << endl;
 	return 0;
