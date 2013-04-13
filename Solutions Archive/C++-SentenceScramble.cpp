@@ -36,7 +36,7 @@ string scrambleSentence(vector<string> vIn) {
 
 
 
-vector<string> vectorizeString(string sSentence) {
+vector<string> splitString(string sSentence) {
 	int i;
 	vector<string> vOut;
 
@@ -57,12 +57,11 @@ vector<string> vectorizeString(string sSentence) {
 
 int main(int argc, const char *argv[]) {
 	string sSentence, sScrambled;
-	vector<string> vSent;
+
 	cout << "Give me a sentence to scramble: ";
 	getline(cin, sSentence);
 	 
-	vSent = vectorizeString(sSentence);
-	sScrambled = scrambleSentence(vSent);
+	sScrambled = scrambleSentence(splitString(sSentence));
 	cout << "Your original sentence was:\n  --> '" << sSentence << "'\nYour scrambled sentence is:\n  --> '" << sScrambled << "'" << endl;
 	return 0;
 }
