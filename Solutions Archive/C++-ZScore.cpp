@@ -41,14 +41,14 @@ double mean(vector<double> vec) {
 	return accumulator / vec.capacity();
 }
 
-double sampleVariance(vector<double> sampleData, double mean) {
+double popVariance(vector<double> popData, double mean) {
 	double sigmaTerm = 0;
 	
-	for(vector<double>::iterator it = sampleData.begin(); it != sampleData.end(); it++) {
+	for(vector<double>::iterator it = popData.begin(); it != popData.end(); it++) {
 		sigmaTerm += exponent(*it - mean, 2);
 	}
 
-	return sigmaTerm / (sampleData.capacity() - 1);
+	return sigmaTerm / popData.capacity();
 }
 
 double standardDev(double variance) {
@@ -74,10 +74,10 @@ int main(int argc, const char *argv[]) {
 		ins.push_back(k);
 	}
 
-	cout << "From the listed values, the mean is " << mean(ins) << " and the sample variance is " << sampleVariance(ins, mean(ins)) << " and the sample standard deviation is " << standardDev(sampleVariance(ins, mean(ins))) <<  endl;
+	cout << "From the listed values, the mean is " << mean(ins) << " and the population variance is " << popVariance(ins, mean(ins)) << " and the population standard deviation is " << standardDev(popVariance(ins, mean(ins))) <<  endl;
 	cout << "Give me a value to test: ";
 	cin >> k;
-	cout << "The z-score computed at " << k << " is " << zScore(k, mean(ins), standardDev(sampleVariance(ins, mean(ins)))) << endl;
+	cout << "The z-score computed at " << k << " is " << zScore(k, mean(ins), standardDev(popVariance(ins, mean(ins)))) << endl;
 
 	return 0;
 }

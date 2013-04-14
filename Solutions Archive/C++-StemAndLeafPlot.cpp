@@ -87,11 +87,6 @@ int main(int argc, const char *argv[]) {
 	}
 	amap = computeSLDist(avec);
 	cout << "\nThe stem and leaf plot is as follows: " << endl;
-	/*for (map< int, vector<int> >::iterator it = amap.begin(); it != amap.end(); it++) {
-		for(vector<int>::iterator it2 = it->second.begin(); it2 != it->second.end(); it2++) {
-			cout << it->first << " => " << *it2 << endl;
-		}
-	}*/
 	printSALeaf(amap);
 	return 0;
 }
