@@ -49,9 +49,6 @@ int main( int argc, const char *argv[]) {
 			wordCount += 1;
 		} while (line.find(" ") != string::npos || cont == true);
 	}	
-
-	outfile << "THIS CSV COMES FROM : " << fin << '\n' << "WORD\t\tINSTANCES\t\tFREQUENCY" << endl;;
-
 	map<string, int>::iterator it;
 	for ( it=freqs.begin(); it!=freqs.end(); it++) {
 		outfile << "'" << it->first << "'," << it->second << "," << ((it->second / (double)wordCount) * 100) << "%" << endl;
