@@ -4,7 +4,9 @@
 #include <ctime>
 
 int main(int argc, const char *argv[]) {
-	const long unsigned int NUM_ROLLS = 1000000;
+	int NUM_ROLLS;
+	std::cout << "How many rolls would you like to simulate?\n  -->  ";
+	std::cin >> NUM_ROLLS;
 	unsigned int i, dieRoll;
 	std::map<int, int> mRolled;
 	
