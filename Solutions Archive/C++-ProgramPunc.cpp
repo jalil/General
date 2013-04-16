@@ -59,6 +59,9 @@ char oppositeChar(char in) {
 		case ']':
 			out = in - 2;
 			break;
+		default:
+			out = in;
+			break;
 	}
 	return out;
 }
@@ -97,7 +100,7 @@ bool isPunctuationCorrect(string inString){
 	
 int main(int argc, const char *argv[]) {
 	string in;
-	cout << "Give me a string with '[',']','(',')', '{', and '}' characters to check: ";
+	cout << "Give me a string with '[',']','(',')', '{', and '}' characters to check for correctness: ";
 	getline(cin, in);
 	if (isPunctuationCorrect(in)) {
 		cout << "The punctuation is correct!" << endl;
