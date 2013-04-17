@@ -23,7 +23,7 @@ string repeatChar(char c, int n) {
 }
 
 map<int,int> makeDistribution(vector<int> vDist) {
-	int i, min, max;
+	int i, min = 99999, max = -99999;
 	map<int, int> mDist;
 
 	for (vector<int>::iterator it = vDist.begin(); it != vDist.end(); it++) {
@@ -35,10 +35,10 @@ map<int,int> makeDistribution(vector<int> vDist) {
 			mDist[*it] += 1;
 		}
 		//persist max and min of range of the data set
-		if (it == vDist.begin()) {
+		if (min > *it) {
 			min = *it;
 		}
-		else if (it == vDist.end() - 1) {
+		else if (max < *it) {
 			max = *it;
 		}
 	}
@@ -63,7 +63,7 @@ int main(int argc, const char *argv[]) {
 	int i, j, k;
 	vector<int> datapoints;
 
-	cout << "How many data points would you like to add to the data set:\n  -->  ";
+	cout << "How many data points would you like to add to the data set?\n  -->  ";
 	cin >> j;
 
 	for (i = 0; i < j; i++) {
