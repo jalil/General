@@ -1,21 +1,42 @@
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 using namespace std;
 
+
+void bubbleSort(string& in) {
+	int sorted;
+	while (sorted != 0) {
+		sorted = 0;
+		for (string::iterator it = in.begin(); it != in.end(); it++) {
+			if (it + 1 != in.end()) {
+				if (*it > *(it + 1)) {
+					iter_swap(it, it + 1);
+					sorted += 1;
+				}
+			}
+		}
+	}
+	//return in;
+}
+
 bool anagrams(string s1, string s2) {
-	int i , is1 = 0, is2 = 0;
+	int i;
 	if (s1.length() != s2.length()) { 
 		return false;
 	}
 	else {
-		for (i = 0; i < s1.length(); i++) {
-			is1 += s1[i];
-			is2 += s2[i];
-		}
-		return (is1 == is2);
+		bubbleSort(s1);
+		cout << s1 << endl;
+		bubbleSort(s2);
+		cout << s2 << endl;
+		return s1 == s2;
+//		cout << "first " << bubbleSort(s1) << " second " << bubbleSort(s2) << endl;
+//		return (bubbleSort(s1) == bubbleSort(s2));
 	}
 }
+
 
 int main(int argc, const char *argv[]){
 	string sa, sb;
