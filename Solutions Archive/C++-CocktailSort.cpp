@@ -19,7 +19,6 @@ void cocktailSort(std::vector<T>& vIn) {
 		
 		for (typename std::vector<T>::reverse_iterator rit = vIn.rbegin(); rit != vIn.rend(); ++rit) {
 			if (rit + 1 !=  vIn.rend()) {
-				std::cout << *rit << std::endl;
 				if (*rit < *(rit + 1)) {
 					std::iter_swap(rit, rit + 1);
 					sorted += 1;
