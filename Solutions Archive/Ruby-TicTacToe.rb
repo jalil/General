@@ -159,15 +159,15 @@ class TicTacToe
 			end
 		end
 		
-		base = self.board[2][2]
+		base = self.board[0][2]
 		if base == 0
 			return 0
 		end
 
-		for i in (2..0)
-			if self.board[i][i] != base or base == 0
+		for i in (0..2)
+			if self.board[i][2 - i] != base or base == 0
 				break
-			elsif self.board[i][i] == base and i ==2
+			elsif self.board[i][2 - i] == base and i ==2
 				return base
 			end
 		end
