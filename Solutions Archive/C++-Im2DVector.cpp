@@ -4,12 +4,13 @@
 class C2DVector {
 	public:
 	int x,y;
-	C2DVector() {};
+	C2DVector() {x = 0; y = 0;}
 	C2DVector (int, int);
 	//vector addition
 	C2DVector operator + (C2DVector);
 	//vector subtraction
 	C2DVector operator - (C2DVector);
+	
 	std::string print();
 };
 
