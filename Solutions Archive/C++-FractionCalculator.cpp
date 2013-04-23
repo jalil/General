@@ -17,6 +17,9 @@ class Fraction {
 		//constructors
 		Fraction();
 		Fraction(int, int);
+		
+		//destructors
+		~Fraction();
 
 		//computation options
 		Fraction multiply(Fraction b);
@@ -39,27 +42,34 @@ int Fraction::getNumerator() { return numerator;}
 
 int Fraction::getDenominator() { return denominator;}
 
+Fraction::Fraction() {
+	numerator = 1;
+	denominator = 1;
+}
+
 Fraction::Fraction(int a, int b) {
 	numerator = a;
 	denominator = b;
 	reduce();
 }
 
+Fraction::~Fraction() {}
+
 Fraction Fraction::multiply(Fraction b) {
-	Fraction c((getNumerator() * b.getNumerator()), (getDenominator() * b.getDenominator()));
+	Fraction c((numerator * b.getNumerator()), (denominator * b.getDenominator()));
 	return c;
 }
 
 Fraction Fraction::divide(Fraction b) {
-	Fraction c((getNumerator() * b.getDenominator()), (getDenominator() * b.getNumerator()));
+	Fraction c((numerator * b.getDenominator()), (denominator * b.getNumerator()));
 	return c;
 }
 
 Fraction Fraction::add(Fraction b) {
 	int numc, denc;
 
-	numc = (getNumerator() * b.getDenominator()) + (getDenominator() * b.getNumerator());
-	denc = getDenominator() * b.getDenominator();
+	numc = (numerator * b.getDenominator()) + (denominator * b.getNumerator());
+	denc = denominator * b.getDenominator();
 
 	return Fraction(numc, denc);
 }
@@ -67,14 +77,14 @@ Fraction Fraction::add(Fraction b) {
 Fraction Fraction::subtract(Fraction b) {
 	int numc, denc;
 	
-	numc = (getNumerator() * b.getDenominator()) - (getDenominator() * b.getNumerator());
-	denc = getDenominator() * b.getDenominator();
+	numc = (numerator * b.getDenominator()) - (denominator * b.getNumerator());
+	denc = denominator * b.getDenominator();
 
 	return Fraction(numc, denc);
 }	
 
 string Fraction::print() {
-	return intToStr(getNumerator()) + " / " + intToStr(getDenominator());
+	return intToStr(numerator) + " / " + intToStr(denominator);
 }
 
 string Fraction::intToStr(int n) {
@@ -108,9 +118,9 @@ int Fraction::GCD(int a, int b) {
 }
 
 void Fraction::reduce() {
-	int gcd = GCD(getNumerator(), getDenominator());
-	setNumerator(getNumerator() / gcd);
-	setDenominator(getDenominator() / gcd);
+	int gcd = GCD(numerator, denominator);
+	setNumerator(numerator / gcd);
+	setDenominator(denominator / gcd);
 }
 
 
