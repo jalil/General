@@ -25,6 +25,7 @@ class Fraction {
 		std::string print();
 		int GCD(int a, int b);
 		void reduce();
+		void negateQuot();
 };
 //Method declarations
 void Fraction::setNumerator(int n) { numerator = n; }
@@ -44,6 +45,7 @@ Fraction::Fraction(int a, int b) {
 	numerator = a;
 	denominator = b;
 	reduce();
+	negateQuot();
 }
 
 Fraction Fraction::operator* (Fraction b) {
@@ -55,8 +57,6 @@ Fraction Fraction::operator/ (Fraction b) {
 }
 
 Fraction Fraction::operator+ (Fraction b) {
-	int numc, denc;
-
 	if (numerator == 0 || b.getNumerator() == 0) {
 		if (numerator != 0) {
 			return Fraction(numerator, denominator);
@@ -71,9 +71,7 @@ Fraction Fraction::operator+ (Fraction b) {
 }
 
 Fraction Fraction::operator- (Fraction b) {
-	int numc, denc;
-
-	if (numerator == 0 || b.getNumerator() = 0) {	
+	if ( numerator == 0 || b.getNumerator() == 0) {	
 		if (numerator != 0) {
 			return Fraction(numerator, denominator);
 		}
@@ -82,7 +80,7 @@ Fraction Fraction::operator- (Fraction b) {
 		}
 	}
 	else {
-		Fraction((numerator * b.getDenominator()) - (denominator * b.getNumerator()), (denominator * b.getDenominator());
+		return Fraction((numerator * b.getDenominator()) - (denominator * b.getNumerator()), (denominator * b.getDenominator()));
 	}
 }	
 
@@ -115,8 +113,7 @@ int Fraction::GCD(int a, int b) {
 }
 
 void Fraction::reduce() {
-	int gcd;
-		
+	int gcd;		
 	if (numerator == 0 || denominator == 0) {
 		numerator = 0;
 		denominator = 0;
@@ -127,6 +124,15 @@ void Fraction::reduce() {
 		setDenominator(denominator / gcd);
 	}
 }
+
+void Fraction::negateQuot() {
+	if ((numerator < 0 && denominator < 0) || (numerator >= 0 && denominator < 0)){
+		numerator = -numerator;
+		denominator = -denominator;
+	}
+}
+
+		
 
 
 int main(int argc, const char *argv[]) {
