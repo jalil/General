@@ -29,7 +29,7 @@ void cocktailSort(std::vector<int>& v) {
 
 
 int binSearch(std::vector<int> v, int val) {
-	int lowBound =  0,  highBound = v.size() - 1;
+	int lowBound =  0,  highBound = v.size();
 	int mid;
 	
 	while (lowBound != highBound - 1) {
