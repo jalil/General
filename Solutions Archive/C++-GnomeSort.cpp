@@ -12,7 +12,7 @@ std::string printVector(std::vector<int> v) {
 
 void gnomeSort(std::vector<int>& v) {
 	std::vector<int>::iterator itv = v.begin();
-	while (itv != v.end()) {
+	while (itv + 1 != v.end()) {
 		if (*itv > *(itv + 1)) {
 			std::iter_swap(itv, itv + 1);
 			if (itv != v.begin()) {
