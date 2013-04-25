@@ -8,14 +8,14 @@ void oddEvenSort(std::vector<int>& v) {
 	while (sorted != 0) {
 		sorted = 0;
 		//odd first
-		for (std::vector<int>::iterator it = v.begin() + 1; it <= v.end() - 1; it += 2) {
+		for (std::vector<int>::iterator it = v.begin() + 1; it < v.end() - 1; it += 2) {
 			if (*it > *(it + 1)) {
 				std::iter_swap(it, it + 1);
 				sorted += 1;
 			}
 		}
 		//even second
-		for (std::vector<int>::iterator it = v.begin(); it <= v.end() - 1; it += 2) {
+		for (std::vector<int>::iterator it = v.begin(); it < v.end() - 1; it += 2) {
 			if (*it > *(it + 1)) {
 				std::iter_swap(it, it + 1);
 				sorted += 1;
