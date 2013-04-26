@@ -19,7 +19,6 @@ void selectionSort(std::vector<T>& v) {
 				}
 			}
 		}
-		//if (i != v.size() - 1) {
 		std::iter_swap(v.begin() + i, mint);
 		i = i + 1;
 	}
