@@ -6,26 +6,25 @@
 template <typename T>
 void selectionSort(std::vector<T>& v) {
 	//sorts --> number of swaps, i --> integral offset from first pointer location
-	unsigned int sorts = 0, i = 0;
+	unsigned int i = 0;
 	//it --> main iterator, mint --> minimum value location
 	typename std::vector<T>::iterator it, mint;
 	while (i != v.size() - 1) {
 		//initialize mint --> first element of unsorted sub-vector
 		mint = v.begin() + i;
-		for (typename std::vector<T>::iterator it = i + v.begin(); it != v.end(); ++it) {
+		for (it = i + v.begin(); it != v.end(); ++it) {
 			if (it != v.end()) {			
 				if (*mint > *it) {
 					mint = it;
-					sorts++;
 				}
 			}
 		}
-		if (sorts != 0) {
-			std::iter_swap(v.begin() + i, mint);
-		}
+		//if (i != v.size() - 1) {
+		std::iter_swap(v.begin() + i, mint);
 		i = i + 1;
 	}
 }
+
 
 template <typename T>
 std::string printVector(std::vector<T> v) {
