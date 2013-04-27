@@ -17,9 +17,8 @@ void combSort(std::vector<T>& v) {
 	unsigned int gap = v.size(), sorts;
 	while (gap > 1 || sorts != 0) {
 		gap > 1 ? gap /= 1.3 : gap = 1;
-		std::cout << gap << std::endl;
 		sorts = 0;
-		for (typename std::vector<T>::iterator it = v.begin(); it < v.end() - gap; it++) {
+		for (typename std::vector<T>::iterator it = v.begin(); it + gap < v.end(); it++) {
 			if (*it > *(it + gap)) {
 				std::iter_swap(it, it + gap);
 				sorts++;
