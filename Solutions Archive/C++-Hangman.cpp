@@ -9,12 +9,10 @@ class Hangman {
 		std::string charsToGuess;
 		unsigned int tries;
 	public:
-		//constructor - destructor
-		Hangman(std::string);
-		//~Hangman();	
+		//constructor
+		Hangman(std::string);	
 		//utility methods
 		void run();
-		std::string generateDisplay(std::string);
 		bool isOver();
 		std::vector<int> letterMatches(char);
 		void updateCharsToGuess(char);
