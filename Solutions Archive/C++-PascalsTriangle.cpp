@@ -9,7 +9,6 @@ std::string makePadding(int max, int min) {
 	int i, j;
 	std::string s = "";
 
-	//j = max - (2 * min);
 	j = max - min;
 	for (i = 0; i < j; i++) {
 		s += " ";
@@ -42,7 +41,7 @@ std::vector<int> getPascalRow(int n) {
 }
 
 int binomCoef(int n, int k) {
-	if (n == 0 || n == 1 || k == 0 || n == k) {
+	if (n == k || k == 0) {
 		return 1;
 	}
 	else {
@@ -52,7 +51,6 @@ int binomCoef(int n, int k) {
 
 int main(int argc, const char *argv[]) {
 	int i;
-	std::string s;
 	
 	std::cout << "To what row would you like to find Pascal's triangle?\n  -->  ";
 	std::cin >> i;
