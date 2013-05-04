@@ -46,7 +46,7 @@ double computeGPA(std::vector<std::pair<std::string, int> > v) {
 
 int main(int argc, const char *argv[]) {
 	int i,j,k;
-	std::string grade, in;
+	std::string grade;
 	std::vector<std::pair<std::string, int> > v;
 	
 	std::cout << "How many classes are you taking?\n  -->  ";
