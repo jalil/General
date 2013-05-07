@@ -28,7 +28,6 @@ void cocktailSort(std::vector<T>& v) {
 
 template <typename T>
 void fisherYatesShuffle(std::vector<T>& v) {
-	int i;
 	std::default_random_engine generator;
 	std::uniform_int_distribution<int> distribution(0, v.size() - 1);
 	auto nextRand  = std::bind(distribution, generator);
@@ -61,7 +60,7 @@ int main(int argc, const char *argv[]) {
 	}
 
 	//sort list before giving it back to the user
-cocktailSort(v);
+	cocktailSort(v);
 
 	std::cout << "The unshuffled sorted vector is " << printVector(v) << std::endl;
 
