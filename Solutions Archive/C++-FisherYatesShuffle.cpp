@@ -18,7 +18,7 @@ void cocktailSort(std::vector<T>& v) {
 		for (typename std::vector<T>::reverse_iterator rit = v.rbegin(); rit != v.rend() - 1; rit++) {
 			if (*rit < *(rit + 1)) {
 				std::iter_swap(rit, rit + 1);
-				sorted++;
+				++sorted;
 			}
 		}
 	}
@@ -44,7 +44,7 @@ std::string printVector(std::vector<T> v) {
 	for (typename std::vector<T>::iterator it = v.begin(); it != v.end(); it++) {
 		s += std::to_string(*it) + ", ";
 	}
-	return s.substr(0, s.length() - 1) + ">";
+	return s.substr(0, s.length() - 2) + ">";
 }
 
 int main(int argc, const char *argv[]) {
