@@ -23,9 +23,21 @@ std::string subStringSearch(std::string searchString, std::string wildString) {
 }
 
 int main(int argc, const char *argv[]) {
-	std::string in = "fuckaduck";
-	std::string out = subStringSearch(in, "f*k");
-	std::cout << out << std::endl;
+	std::string sstr, wcstr, ostr;
+
+	std::cout << "What is the search string?\n  -->  ";
+	std::cin >> sstr;
+	std::cout << "What are the wildcard parameters? (ex. l*p)\n  -->  ";
+	std::cin >> wcstr;
+
+	ostr = subStringSearch(sstr, wcstr);
+	
+	if (ostr != "") {
+		std::cout << "The wild card substring found was '" << ostr << "'" << std::endl;
+	}
+	else {
+		std::cout << "No wild card substring with the parameters '" << wcstr << "' exists in '" << sstr << "'" << std::endl;
+	}
 	return 0;
 }
  
