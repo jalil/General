@@ -1,7 +1,8 @@
 #include <iostream>
 #include <string>
 
-int numDigits(int num) {
+typename <template T>
+T numDigits(T num) {
 	int d = 0;
 	while(num) {
 		num /= 10;
