@@ -77,7 +77,7 @@ int playGame(int n) {
 		mP2 = robotGuess();
 		r = evalMoves(mP1, mP2);
 		std::cout << "The current score is:\nHuman --> " << p1 << ", Computer --> " << p2 << std::endl;
-		std::cout << "You used '" << moveToStr(mP1) << "' and the computer chose '" << moveToStr(mP2) << std::endl;
+		std::cout << "You used '" << moveToStr(mP1) << "' and the computer chose '" << moveToStr(mP2) << "'" << std::endl;
 
 		if (r == 1) {
 			std::cout << "You won this round! Have a point!\n" << std::endl;
@@ -93,10 +93,6 @@ int playGame(int n) {
 	}
 	return p1 > p2 ? p1 : p2;
 }
-
-	
-		
-
 
 int main(int argc, const char *argv[]) {
 	int p, n;
