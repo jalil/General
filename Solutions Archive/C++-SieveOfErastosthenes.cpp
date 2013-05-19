@@ -31,9 +31,11 @@ std::vector<int> sieveOfErastosthenes(int n) {
 	std::vector<int> primes;
 	std::vector<bool> valsToCheck(n, true);
 
-	for (i = 2; i < n; ++i) {
-		for (j = 2; j < squareRoot(n); ++j) {
-			valsToCheck[j * i] = false;
+	for (i = 2; i < squareRoot(n); ++i) {
+		if (valsToCheck[i]) {
+			for (j = 2; j < n; ++j) {
+				valsToCheck[j * i] = false;
+			}
 		}
 	}
 	
