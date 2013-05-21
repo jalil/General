@@ -22,7 +22,7 @@ std::string stripWhitespace(std::string s) {
 
 int findDimensions(std::string s) {
 	int len = s.length(), currEst = 1;
-	while (!(currEst * currEst >= len - (len * 0.1) && currEst * currEst <= len + (len * 0.1))) {
+	while (!(currEst * currEst >= len)) {
 		currEst += 1;
 	}
 	return currEst;
@@ -42,20 +42,47 @@ std::vector<std::string> makeSquare(std::string s) {
 	return v;
 }
 
-int main(int argc, const char *argv[]) {
-	std::string s1, s2;
-	
-	std::cout << "Give me a string to encode: ";
-	std::getline(std::cin, s1);
-	s2 = stripWhitespace(s1);
-	std::cout << s2 << std::endl;
-	std::cout << findDimensions(s2) << std::endl;
-	std::vector<std::string> v = makeSquare(s2);
+std::string createCipherText(std::vector<std::string> v) {
+	int i;
+	std::string s = "";
+	for (i = 0; i < v[0].length(); ++i) {
+		for (std::vector<std::string>::iterator it = v.begin(); it != v.end(); ++it) {
+			if (i >= (*it).length()) {
+				s += ' ';
+			}
+			else {	  
+				s += (*it)[i];
+			}
+		}
+		s += ' ';
+	}
+	return s;
+}
 
-	for (std::vector<std::string>::iterator it = v.begin(); it != v.end(); ++it) {
-		std::cout << *it << std::endl;
+std::string encrypt(std::string s) {
+	std::vector<std::string> sVector;
+	sVector = makeSquare(stripWhitespace(s));
+	return createCipherText(sVector);
+}
+
+int main(int argc, const char *argv[]) {
+	std::string s;
+	std::vector<std::string> sVector;
+	
+
+	std::cout << "DATA INITIALIZATION:\n Give me a sentence to encode: ";
+	std::getline(std::cin, s);
+
+	sVector = makeSquare(stripWhitespace(s));
+
+	std::cout << "\nCODE SQUARE:" << std::endl;
+
+	for (std::vector<std::string>::iterator it = sVector.begin(); it != sVector.end(); ++it) {
+		std::cout << "Row " << sVector.end() - it << ": " << *it << std::endl;
 	}
 	
+	std::cout << "\nCipher Text:" << std::endl;
+	std::cout << "The sentence '" << s << "' has become '" << createCipherText(sVector) << "'" << std::endl;
 
 	return 0;
 }
