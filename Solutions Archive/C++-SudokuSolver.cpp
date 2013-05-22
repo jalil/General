@@ -3,9 +3,6 @@
 #include <string>
 #include <utility>
 
-template <typename T>
-std::string printVector(std::vector<T>);
-
 class Sudoku {
 	private:
 		std::vector<std::vector<int> > square;
@@ -18,7 +15,6 @@ class Sudoku {
 		bool checkPosValidity(int, int);
 		bool checkCol(int, int);
 		bool checkRow(int, int);
-		bool isFull(void);
 		std::pair<int, int> getNextPos(int, int);
 		bool solve(int, int);
 };
@@ -54,18 +50,6 @@ int Sudoku::getPosition(int r, int c) {
 
 void Sudoku::setPosition(int r, int c, int v) {
 	square[r][c] = v;
-}
-
-
-bool Sudoku::isFull(void) {
-	for (std::vector<std::vector<int> >::iterator it = square.begin(); it != square.end(); ++it) {
-		for (std::vector<int>::iterator vit = (*it).begin(); vit != (*it).end(); ++vit) {
-			if (*vit == 0) {
-				return false;
-			}
-		}
-	}
-	return true;
 }
 
 bool Sudoku::checkCol(int c, int v) {
@@ -137,10 +121,7 @@ bool Sudoku::solve(int r, int c) {
 		for (i = 1; i < 10; ++i) {
 			setPosition(r,c,i);
 			if (checkPosValidity(r,c)) {
-				if (r == 8 && c == 8) {
-					return true;
-				}
-				else if (solve(std::get<0>(p), std::get<1>(p))) {
+				if (r == 8 && c == 8 || solve(std::get<0>(p), std::get<1>(p))) {
 					return true;
 				}
 				
