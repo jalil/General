@@ -7,6 +7,11 @@ class Sudoku {
 	private:
 		int n;
 		std::vector<std::vector<int> > square;
+		int numDigits(int);
+		std::string printCell(int, int);
+		bool checkCol(int, int);
+		bool checkRow(int, int);
+		std::pair<int, int> getNextPos(int, int);
 	public:
 		Sudoku(std::vector<std::vector<int> >);
 		~Sudoku();
@@ -15,24 +20,46 @@ class Sudoku {
 		void setPosition(int, int, int);
 		void initConstants(void);
 		bool checkPosValidity(int, int);
-		bool checkCol(int, int);
-		bool checkRow(int, int);
-		std::pair<int, int> getNextPos(int, int);
 		bool solve(int, int);
 };
 
+int Sudoku::numDigits(int num) {
+	int d = 0;
+
+	while (num != 0) {
+		num /= 10;
+		++d;
+	}
+	return d;
+}
+
+std::string Sudoku::printCell(int h, int c) {
+	int i, lenDelta;
+	std::string s = " ";
+
+	lenDelta = numDigits(h) - numDigits(c);
+
+	for (i = 0; i < lenDelta; ++i) {
+		s += ' ';
+	}
+	
+	if (c != 0) {
+		s += std::to_string(c) + " |";
+	}
+	else {
+		s += " |";
+	}
+
+	return s;
+}
+
 std::string Sudoku::printPuzzle(void) {
-	std::string puzzle, topAndBottom(4 * square.size(), '-');
+	std::string puzzle, topAndBottom(((numDigits(n) + 3)* square.size()) + 1, '-');
 	puzzle += topAndBottom + '\n';
 	for (std::vector<std::vector<int> >::iterator it = square.begin(); it != square.end(); ++it) {
 		std::string s = "|";
 		for (std::vector<int>::iterator vit = (*it).begin(); vit != (*it).end(); ++vit) {
-			if (*vit != 0) {
-				s += ' ' + std::to_string(*vit) + " |";
-			}
-			else {
-				s += "   |";
-			}
+			s += printCell(n, *vit);
 		}
 		puzzle += s + '\n';
 	}
@@ -182,7 +209,7 @@ int main(int argc, const char *argv[]) {
 	Sudoku puzzle(initSquare(n));
 	puzzle.initConstants();	
 
-	std::cout << "Your initialized puzzle:" << std::endl;
+	std::cout << "\nYour initialized puzzle:" << std::endl;
 
 	std::cout << puzzle.printPuzzle() << std::endl;
 
