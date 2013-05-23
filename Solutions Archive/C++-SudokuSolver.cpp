@@ -54,15 +54,9 @@ void Sudoku::setPosition(int r, int c, int v) {
 
 bool Sudoku::checkCol(int c, int v) {
 	int i, count = 0;
-	std::vector<int> ivec;
+	
 	for (i = 0; i < 9; ++i) {
-		if (square[i][c] != 0) {
-			ivec.push_back(square[i][c]);
-		}
-	}
-
-	for (std::vector<int>::iterator it = ivec.begin(); it != ivec.end(); ++it) {
-		if (v == *it) {
+		if (square[i][c] == v) {
 			++count;
 		}
 	}
@@ -72,15 +66,9 @@ bool Sudoku::checkCol(int c, int v) {
 
 bool Sudoku::checkRow(int r, int v) {
 	int j, count = 0;
-	std::vector<int> ivec;
+	
 	for (j = 0; j < 9; ++j) {
-		if (square[r][j] != 0) {
-			ivec.push_back(square[r][j]);
-		}
-	}
-
-	for (std::vector<int>::iterator it = ivec.begin(); it != ivec.end(); ++it) {
-		if (v == *it) {
+		if (square[r][j] == v) {
 			++count;
 		}
 	}
