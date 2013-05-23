@@ -92,7 +92,7 @@ void Sudoku::setPosition(int r, int c, int v) {
 void Sudoku::initConstants(void) {
 	int r,c,i,j,v;
 
-	std::cout << "DIRECTIONS:\n 1: The grid position (0,0) is the upper left corner\n 2: Row, columnar, and cell values must be between 0 and N where N is the row length\n" << std::endl;
+	std::cout << "\nDIRECTIONS:\n 1: The grid position (0,0) is the upper left corner\n 2: Row, columnar, and cell values must be between 0 and N where N is the row length\n" << std::endl;
 	std::cout << "How many constant values would you like to add?\n  -->  ";
 	std::cin >> j;
 	
