@@ -65,7 +65,7 @@ std::vector<std::vector<int> > initMatrix(void) {
 	
 	std::vector<std::vector<int> > matrix;
 
-	std::cout << "What are the dimensions of the matrix?\n  -->  ";
+	std::cout << "What will the dimensions of you NxN matrix be?\n  N = ";
 	std::cin >> n;
 
 	for (i = 0; i < n; ++i) {
