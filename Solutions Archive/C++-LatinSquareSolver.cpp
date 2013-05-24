@@ -3,12 +3,12 @@
 #include <string>
 #include <utility>
 
-class Sudoku {
+class LatinSquare {
 	private:
 		std::vector<std::vector<int> > square;
 	public:
-		Sudoku(std::vector<std::vector<int> >);
-		~Sudoku();
+		LatinSquare(std::vector<std::vector<int> >);
+		~LatinSquare();
 		std::string printPuzzle(void);
 		int getPosition(int, int);
 		void setPosition(int, int, int);
@@ -19,7 +19,7 @@ class Sudoku {
 		bool solve(int, int);
 };
 
-std::string Sudoku::printPuzzle(void) {
+std::string LatinSquare::printPuzzle(void) {
 	std::string puzzle, topAndBottom(37, '-');
 	puzzle += topAndBottom + '\n';
 	for (std::vector<std::vector<int> >::iterator it = square.begin(); it != square.end(); ++it) {
@@ -29,17 +29,15 @@ std::string Sudoku::printPuzzle(void) {
 		}
 		puzzle += s + '\n';
 	}
-
 	return puzzle + topAndBottom;
 }
 
-Sudoku::Sudoku(std::vector<std::vector<int> > vvi) {
+LatinSquare::LatinSquare(std::vector<std::vector<int> > vvi) {
 	square = vvi;
 }
 
-Sudoku::~Sudoku(){}
-
-int Sudoku::getPosition(int r, int c) {
+LatinSquare::~LatinSquare(){}
+	int LatinSquare::getPosition(int r, int c) {
 	if ((r > 8 || r < 0) || (c > 8 || c < 0)) {
 		return -1;
 	}
@@ -48,25 +46,22 @@ int Sudoku::getPosition(int r, int c) {
 	}
 }
 
-void Sudoku::setPosition(int r, int c, int v) {
+void LatinSquare::setPosition(int r, int c, int v) {
 	square[r][c] = v;
 }
 
-bool Sudoku::checkCol(int c, int v) {
+bool LatinSquare::checkCol(int c, int v) {
 	int i, count = 0;
-	
 	for (i = 0; i < 9; ++i) {
 		if (square[i][c] == v) {
 			++count;
 		}
 	}
-
 	return (count == 1);
 }
 
-bool Sudoku::checkRow(int r, int v) {
+bool LatinSquare::checkRow(int r, int v) {
 	int j, count = 0;
-	
 	for (j = 0; j < 9; ++j) {
 		if (square[r][j] == v) {
 			++count;
@@ -76,12 +71,12 @@ bool Sudoku::checkRow(int r, int v) {
 	return (count == 1);
 }
 
-bool Sudoku::checkPosValidity(int r, int c) {
+bool LatinSquare::checkPosValidity(int r, int c) {
 	int v = square[r][c];
 	return (checkCol(c, v) && checkRow(r, v));
 }
 
-std::pair<int,int> Sudoku::getNextPos(int r, int c) {
+std::pair<int,int> LatinSquare::getNextPos(int r, int c) {
 	int newRow, newCol;
 	if (r == 8 && c == 8) {
 		newRow = newCol = 0;
@@ -98,12 +93,11 @@ std::pair<int,int> Sudoku::getNextPos(int r, int c) {
 	return std::make_pair(newRow,newCol);
 }
 
-bool Sudoku::solve(int r, int c) {
+bool LatinSquare::solve(int r, int c) {
 	int i;
 	std::pair<int,int> p = getNextPos(r,c);
 	if (getPosition(r,c) != 0) {
 		return (solve(std::get<0>(p), std::get<1>(p)));
-	
 	}
 	else {
 		for (i = 1; i < 10; ++i) {
@@ -112,7 +106,6 @@ bool Sudoku::solve(int r, int c) {
 				if (r == 8 && c == 8 || solve(std::get<0>(p), std::get<1>(p))) {
 					return true;
 				}
-				
 			}
 		}
 		setPosition(r,c,0);
@@ -135,9 +128,9 @@ std::vector<std::vector<int> > initSquare(void) {
 
 int main(int argc, const char *argv[]) {
 	int i, j, r, c, v;
-	Sudoku puzzle(initSquare());
+	LatinSquare puzzle(initSquare());
 
-	std::cout << "How many values would you like to add to the puzzle?\n  -->  ";
+	std::cout << "How many values would you like to add to the puzzle?\n --> ";
 	std::cin >> j;
 
 	for (i = 0; i < j; ++i) {
@@ -148,7 +141,7 @@ int main(int argc, const char *argv[]) {
 
 		std::cout << "Give me the column value: ";
 		std::cin >> c;
-	
+
 		std::cout << "Give me the numeric value for that cell: ";
 		std::cin >> v;
 
@@ -160,11 +153,9 @@ int main(int argc, const char *argv[]) {
 	std::cout << puzzle.printPuzzle() << std::endl;
 
 	std::cout << "\nOur solved puzzle:" << std::endl;	
-	
+
 	puzzle.solve(0,0);
 	std::cout << puzzle.printPuzzle() << std::endl;	
-	
-	return 0;
+
+return 0;
 }
-
-
