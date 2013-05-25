@@ -75,7 +75,7 @@ int Matrix::isHomomorphism(Matrix otherMatrix) {
 	for (i = 0; i < 4; ++i) {
 		otherMatrix.rotate(1);
 		if (matrix == otherMatrix.getVectors()) {
-			return i;
+			return i + 1;
 		}
 	}
 	return -1;
