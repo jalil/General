@@ -41,11 +41,6 @@ Queens::~Queens() {}
 
 
 void Queens::findSolutions(void) {
-	int i;
-	bool alreadyPresent;
-	std::vector<int> homomorphisms;
-	std::vector<std::vector<int> > uniqueSolutions;
-	
 	solve(0);	
 }
 
@@ -63,9 +58,6 @@ bool Queens::solve(int q) {
 			else if(solve(q + 1)) {
 				return true;
 			}
-		}
-		else {
-			std::cout << printBoard(queenPositions) << std::endl;
 		}
 	}
 	removeQueen(q);
