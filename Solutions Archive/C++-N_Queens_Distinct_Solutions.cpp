@@ -165,7 +165,7 @@ bool Queens::checkPosValidity(int q) {
 int main(int argc, const char *argv[]) {
 	int n;
 
-	std::cout << "How many rows?\n  -->  ";
+	std::cout << "What would you like the dimensions of your NxN chessboard to be?\n  N = ";
 	std::cin >> n;
 
 	Queens q(n);
