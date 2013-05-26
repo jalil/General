@@ -3,71 +3,82 @@
 #include <string>
 #include <algorithm>
 
+
 class Queens {
 	private:
 		int n;
+		std::string printVector(std::vector<int>);
 		std::vector<int> queenPositions;
 		std::vector<std::vector<int> > solutions;
-		bool isUniqueSolution();
+		std::string printBoard(std::vector<int>);
 		bool inDirection(int, int, int, int);
 		bool checkDiagonals(int);
 		bool checkCols(int);
-	public:
-		Queens(int);
-		~Queens();
 		bool solve(int);
-		std::string printSolutions(void);
-		std::string printBoard(std::vector<int>);
-		std::vector<int> getQueens(void);
 		int getQueen(int);
 		void setQueen(int, int);
 		void removeQueen(int);
 		bool checkPosValidity(int);
+	public:
+		Queens(int);
+		~Queens();
+		void findSolutions(void);
+		int numSolutions(void);
+		std::string printSolutions(void);
 };
 
-Queens::Queens(int numQueens) {
+Queens::Queens(int len) {
 	int i;
-	n = numQueens;
-	for (i = 0; i < numQueens; ++i) {
+	
+	n = len;
+	
+	for (i = 0; i < n; ++i) {
 		queenPositions.push_back(-1);
 	}
 }
 
 Queens::~Queens() {}
 
+
+void Queens::findSolutions(void) {
+	int i;
+	bool alreadyPresent;
+	std::vector<int> homomorphisms;
+	std::vector<std::vector<int> > uniqueSolutions;
+	
+	solve(0);	
+}
+
 bool Queens::solve(int q) {
 	int i;
 	for (i = 0; i < n; ++i) {
-		setQueen(q, i);
+		setQueen(q,i);
 		if (checkPosValidity(q)) {
 			if (q == n - 1) {
-				if (isUniqueSolution()) {
-					solutions.push_back(queenPositions);
-					return false;
-				}
+				solutions.push_back(queenPositions);
+				removeQueen(q);
+				return false;
+			
 			}	
 			else if(solve(q + 1)) {
 				return true;
 			}
+		}
+		else {
+			std::cout << printBoard(queenPositions) << std::endl;
 		}
 	}
 	removeQueen(q);
 	return false;	
 }
 
-bool Queens::isUniqueSolution() {
-	for (std::vector<std::vector<int> >::iterator it = solutions.begin(); it != solutions.end(); ++it) {
-		if (queenPositions == *it) {
-			return false;
-		}
-	}	
-	return true;
+int Queens::numSolutions(void) {
+	return solutions.size();
 }
 
+
 void Queens::removeQueen(int q) {
-	if (q >= 0 && q < n) {
-		queenPositions[q] = -1;
-	}
+	queenPositions[q] = -1;
 }
 
 std::string Queens::printSolutions(void) {
@@ -99,19 +110,13 @@ std::string Queens::printBoard(std::vector<int> aBoard) {
 	}
 	return board;
 }		
-	 
-std::vector<int> Queens::getQueens(void) {
-	return queenPositions;
-}
 
 int Queens::getQueen(int idx) {
-	return (!(idx >= queenPositions.size())) ? queenPositions[idx] : -1;
+	return queenPositions[idx];
 }
 
 void Queens::setQueen(int i, int v) {
-	if (!(i > queenPositions.size())) {
-		queenPositions[i] = v;
-	}
+	queenPositions[i] = v;
 }
 
 bool Queens::checkCols(int q) {
@@ -127,11 +132,11 @@ bool Queens::checkCols(int q) {
 bool Queens::inDirection(int r, int c, int rD, int cD) {
 	int i;
 	for (i = 1; i < n; ++i) {
-		if ((r + (rD * i) > n) || (r + (rD * i) < 0) || (c + (cD * i) > n) || (c + (cD * i) < 0)) {
+		if ((r + (rD * i) >= n) || (r + (rD * i) < 0) || (c + (cD * i) >= n) || (c + (cD * i) < 0)) {
 			return false;
 		}
 		else {
-			if (getQueen(r + (rD * i)) == c + (cD * i )) {
+			if (getQueen(r + (rD * i)) != -1 && getQueen(r + (rD * i)) == c + (cD * i )) {
 				return true;
 			}
 		}
@@ -153,15 +158,20 @@ bool Queens::checkDiagonals(int q) {
 	return false;
 }
 		
-
 bool Queens::checkPosValidity(int q) {
 	return (checkCols(q) && checkDiagonals(q));
 }
 
 int main(int argc, const char *argv[]) {
-	Queens q(7);
-	q.solve(0);
+	int n;
+
+	std::cout << "How many rows?\n  -->  ";
+	std::cin >> n;
+
+	Queens q(n);
+	q.findSolutions();
 	std::cout << q.printSolutions() << std::endl;
+	std::cout << "The total number of distinct solutions is " << q.numSolutions() << " with a " << n << "x" << n << " grid." << std::endl;
 	return 0;
 }
 
