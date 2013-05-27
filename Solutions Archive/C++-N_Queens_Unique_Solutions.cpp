@@ -357,7 +357,7 @@ int main(int argc, const char *argv[]) {
 	Queens q(n);
 	q.findSolutions();
 	std::cout << q.printSolutions() << std::endl;
-	std::cout << q.numSolutions() << std::endl;
+	std::cout << "On a " << n << "x" << n << " chessboard, there are " <<  q.numSolutions() << " totally unique board states. " << std::endl;
 	return 0;
 }
 
