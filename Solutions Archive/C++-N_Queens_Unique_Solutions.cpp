@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <algorithm>
 
 class SolutionFilter {
 	private:
@@ -24,7 +23,13 @@ class SolutionFilter {
 };
 
 SolutionFilter::SolutionFilter(std::vector<std::vector<int> > v) {
-	n = v[0].size();
+	if (!v.empty()) {
+		n = v[0].size();
+	}
+	else {
+		n = 0;
+	}
+
 	encodedSolutions = v;
 	decodedSolutions = decodeSolutions(encodedSolutions);
 }
