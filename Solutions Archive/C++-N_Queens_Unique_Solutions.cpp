@@ -22,6 +22,7 @@ class Queens {
 		bool isHomomorphism(std::vector<int> v1, std::vector<int> v2);
 		bool isIn(int, std::vector<int>);
 		void rotate90(std::vector<int>&);
+		std::vector<int> mirror(std::vector<int>);
 		std::vector<int> rotate(int, std::vector<int>);
 		
 	public:
@@ -43,6 +44,45 @@ Queens::Queens(int len) {
 }
 
 Queens::~Queens() {}
+
+std::vector<int> Queens::mirror(std::vector<int> v) {
+	int i, j;
+	std::vector<std::vector<int> > mirror, matrix;
+	
+	for (i = 0; i < n; ++i) {
+		std::vector<int> row;
+		for (j = 0; j < n; ++j) {
+			row.push_back(0);
+		}
+		matrix.push_back(row);
+	}
+	
+	for (std::vector<int>::iterator it = v.begin(); it != v.end(); ++it) {
+		matrix[it - v.begin()][*it] = 1;
+	}
+	
+	//mirror it up
+	
+	for (std::vector<std::vector<int> >::iterator it = matrix.begin(); it != matrix.end(); ++it) {
+		std::vector<int> mirrorRow;
+		for (std::vector<int>::reverse_iterator rit = (*it).rbegin(); rit != (*it).rend(); ++rit) {
+			mirrorRow.push_back(*rit);
+		}
+		mirror.push_back(mirrorRow);
+	}
+	
+	v.clear();
+	
+	for (std::vector<std::vector<int> >::iterator it = mirror.begin(); it != mirror.end(); ++it) {
+		for (std::vector<int>::iterator innerIt = (*it).begin(); innerIt != (*it).end(); ++innerIt) {
+			if (*innerIt != 0) {
+				v.push_back(innerIt - (*it).begin());
+			}
+		}
+	}
+	
+	return v;
+}
 
 void Queens::rotate90(std::vector<int>& v) {
 	int i, j;
@@ -113,9 +153,18 @@ bool Queens::isHomomorphism(std::vector<int> v1, std::vector<int> v2) {
 	int i;
 	for (i = 0; i < 4; ++i) {
 		
-		v2 = rotate(i, v2);
+		v2 = rotate(1, v2);
 		if (v1 == v2) {
 			std::cout << printVector(v1) << " equals " << printVector(v2) << std::endl;
+			return true;
+		}
+	}
+	
+	v2 = mirror(v2);
+	
+	for (i = 0; i < 4; ++i) {
+		v2 = rotate(1, v2);
+		if (v1 == v2) {
 			return true;
 		}
 	}
@@ -129,7 +178,7 @@ void Queens::findSolutions(void) {
 	std::vector<std::vector<int> > uniqueSolutions;
 	
 	solve(0);
-	/*
+	
 	for (std::vector<std::vector<int> >::iterator it = solutions.begin(); it != solutions.end(); ++it) {
 		for (std::vector<std::vector<int> >::iterator innerIt = it; innerIt != solutions.end(); ++innerIt) {
 			if ((!isIn(it - solutions.begin(), homomorphisms)) && (*it != *innerIt) && (isHomomorphism(*it, *innerIt))) {
@@ -151,7 +200,7 @@ void Queens::findSolutions(void) {
 			uniqueSolutions.push_back(*it);
 		}
 	}
-	solutions = uniqueSolutions;*/
+	solutions = uniqueSolutions;
 	
 }
 

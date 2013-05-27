@@ -12,8 +12,10 @@ class Matrix {
 		~Matrix();
 		std::vector<std::vector<int> > getVectors(void);
 		bool operator==(Matrix);
+
 		std::string printMatrix(void);
-		int isHomomorphism(Matrix);
+		void mirror(void);
+		bool isUnique(Matrix);
 		void rotate(int);
 };
 
@@ -44,6 +46,19 @@ std::string Matrix::printMatrix(void) {
 	return mat;
 }
 
+void Matrix::mirror(void) {
+	int i,j;
+	std::vector<std::vector<int> > mirrorV;
+	for (std::vector<std::vector<int> >::iterator it = matrix.begin(); it != matrix.end(); ++it) {
+		std::vector<int> mirrorRow;
+		for (std::vector<int>::reverse_iterator rit = (*it).rbegin(); rit != (*it).rend(); ++rit) {
+			mirrorRow.push_back(*rit);
+		}
+		mirrorV.push_back(mirrorRow);
+	}
+	matrix = mirrorV;
+}
+
 void Matrix::rotate90(void) {
 	int i,j;
 	std::vector<std::vector<int> > rotV;
@@ -70,15 +85,30 @@ void Matrix::rotate(int r) {
 	}
 }		
 
-int Matrix::isHomomorphism(Matrix otherMatrix) {
+bool Matrix::isUnique(Matrix otherMatrix) {
 	int i;
+	//check if equal
+	if (matrix == otherMatrix.getVectors()) {
+		return false;
+	}	
+	//check if matrix 2 is a simple rotation of the first matrix
 	for (i = 0; i < 4; ++i) {
 		otherMatrix.rotate(1);
 		if (matrix == otherMatrix.getVectors()) {
-			return i + 1;
+			return false;
 		}
 	}
-	return -1;
+	//mirror matrix 2 and re-check for rotational differences
+	otherMatrix.mirror();
+
+	for (i = 0; i < 4; ++i) {
+		otherMatrix.rotate(1);
+		if (matrix == otherMatrix.getVectors()) {
+			return false;
+		}
+	}
+
+	return true;
 }	
 
 std::vector<std::vector<int> > initMatrix(void) {
@@ -105,6 +135,7 @@ std::vector<std::vector<int> > initMatrix(void) {
 }
 
 int main(int argc, const char *argv[]) {
+	bool areUnique;
 	int i,j, rotations;
 	std::vector<std::vector<int> > v1, v2;
 
@@ -118,33 +149,33 @@ int main(int argc, const char *argv[]) {
 	}
 
 	//init v1
-	v1[0][2] = 1;
-	v1[1][6] = 1;
-	v1[2][3] = 1;
-	v1[3][0] = 1;
+	v1[0][1] = 1;
+	v1[1][3] = 1;
+	v1[2][0] = 1;
+	v1[3][6] = 1;
 	v1[4][4] = 1;
-	v1[5][1] = 1;
+	v1[5][2] = 1;
 	v1[6][5] = 1;
 
 	//init v2
-	v2[0][3] = 1;
-	v2[1][1] = 1;
-	v2[2][6] = 1;
-	v2[3][4] = 1;
-	v2[4][2] = 1;
-	v2[5][0] = 1;
+	v2[0][1] = 1;
+	v2[1][4] = 1;
+	v2[2][2] = 1;
+	v2[3][0] = 1;
+	v2[4][6] = 1;
+	v2[5][3] = 1;
 	v2[6][5] = 1;
 
 	Matrix matrix1(v1), matrix2(v2);
 	
 	std::cout << "\nYOUR INITIALIZED MATRICES ARE:\n" << "\nMATRIX ONE:\n" << matrix2.printMatrix() << "\nMATRIX TWO:\n" << matrix2.printMatrix() <<  std::endl;
 
-	i = matrix1.isHomomorphism(matrix2);
-	if (i == -1) {
-		std::cout << "\nMatrix 1 and Matrix 2 are not homomorphic." << std::endl;
+	areUnique = matrix1.isUnique(matrix2);
+	if (areUnique) {
+		std::cout << "\nMatrix 1 and Matrix 2 are unique matrices." << std::endl;
 	}
 	else {
-		std::cout << "\nMatrix 1 and Matrix 2 are homomorphic as can be seen when you rotate Matrix 2 by 90-degrees " << i << " times." << std::endl;
+		std::cout << "\nMatrix 1 and Matrix 2 are distinct matrices." << std::endl;
 	}
 	return 0;
 }
