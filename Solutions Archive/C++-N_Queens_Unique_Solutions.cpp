@@ -3,6 +3,177 @@
 #include <string>
 #include <algorithm>
 
+class SolutionFilter {
+	private:
+		int n;
+		std::vector<std::vector<int> > encodedSolutions;
+		std::vector<std::vector<std::vector<int> > > decodedSolutions;
+		
+		std::string printMat(std::vector<std::vector<int> >);
+		void rotate90(std::vector<std::vector<int> >&);
+		bool isIn(int, std::vector<int>);
+		bool isUnique(std::vector<std::vector<int> >, std::vector<std::vector<int> >);
+		std::vector<std::vector<int> > mirror(std::vector<std::vector<int> >);
+		std::vector<std::vector<int> > rotate(int, std::vector<std::vector<int> >);
+		std::vector<std::vector<std::vector<int> > > decodeSolutions(std::vector<std::vector<int> >);
+		void encodeSolutions(void);
+	public:
+		SolutionFilter(std::vector<std::vector<int> >);
+		~SolutionFilter();
+		std::vector<std::vector<int> > getUniques(void);
+};
+
+SolutionFilter::SolutionFilter(std::vector<std::vector<int> > v) {
+	n = v[0].size();
+	encodedSolutions = v;
+	decodedSolutions = decodeSolutions(encodedSolutions);
+}
+
+SolutionFilter::~SolutionFilter() {}
+
+std::vector<std::vector<std::vector<int> > > SolutionFilter::decodeSolutions(std::vector<std::vector<int> > v) {
+	int i, j;
+	
+	std::vector<std::vector<std::vector<int> > > decodedV;
+	for (std::vector<std::vector<int> >::iterator it = v.begin(); it != v.end(); ++it) {
+		std::vector<std::vector<int> > matrix;
+		for (i = 0; i < n; ++i) {
+			std::vector<int> row;
+			for (j = 0; j < n; ++j) {
+				row.push_back(0);
+			}
+			matrix.push_back(row);
+		}
+		
+		for (std::vector<int>::iterator innerIt = (*it).begin(); innerIt != (*it).end(); ++innerIt) {
+			matrix[innerIt - (*it).begin()][*innerIt] = 1;
+		}
+		decodedV.push_back(matrix);
+	}
+	
+	return decodedV;
+}
+
+void SolutionFilter::encodeSolutions(void) {
+	encodedSolutions.clear();
+	for (std::vector<std::vector<std::vector<int> > >::iterator it = decodedSolutions.begin(); it != decodedSolutions.end(); ++it) {
+		std::vector<int> encMatrix;
+		for (std::vector<std::vector<int> >::iterator vit = (*it).begin(); vit != (*it).end(); ++vit) {
+			for (std::vector<int>::iterator eit = (*vit).begin(); eit != (*vit).end(); ++eit) {
+				if (*eit != 0) {
+					encMatrix.push_back(eit - (*vit).begin());
+				}
+			}
+		}
+		encodedSolutions.push_back(encMatrix);
+	}
+}
+
+std::vector<std::vector<int> > SolutionFilter::mirror(std::vector<std::vector<int> > matrix) {
+	std::vector<std::vector<int> > mirror;
+	
+	for (std::vector<std::vector<int> >::iterator it = matrix.begin(); it != matrix.end(); ++it) {
+		std::vector<int> mirrorRow;
+		for (std::vector<int>::reverse_iterator rit = (*it).rbegin(); rit != (*it).rend(); ++rit) {
+			mirrorRow.push_back(*rit);
+		}
+		mirror.push_back(mirrorRow);
+	}
+	return mirror;
+}
+
+void SolutionFilter::rotate90(std::vector<std::vector<int> >& matrix) {
+	int i, j;
+	std::vector<std::vector<int> > rotatedMatrix;
+	
+	for (i = 0; i < n; ++i) {
+		std::vector<int> rotatedRow;
+		for (j = 0; j < n; ++j) {
+			rotatedRow.push_back(matrix[n - j - 1][i]);
+		}
+		rotatedMatrix.push_back(rotatedRow);
+	}
+	
+	matrix = rotatedMatrix;
+}
+
+std::vector<std::vector<int> > SolutionFilter::rotate(int rotations, std::vector<std::vector<int> > v) {
+	int i;
+	
+	for (i = 0; i < rotations; ++i) {
+		rotate90(v);
+	}
+	
+	return v;
+}
+
+bool SolutionFilter::isUnique(std::vector<std::vector<int> > v1, std::vector<std::vector<int> > v2) {
+	int i;
+	for (i = 0; i < 4; ++i) {	
+		v2 = rotate(1, v2);
+		if (v1 == v2) {
+			return false;
+		}
+	}
+	
+	v2 = mirror(v2);
+	
+	for (i = 0; i < 4; i++) {
+			v2 = rotate(1, v2);
+			if (v1 == v2) {
+				return false;
+			}
+		}
+	
+	return true;
+}
+
+bool SolutionFilter::isIn(int val, std::vector<int> v) {
+	for (std::vector<int>::iterator it = v.begin(); it != v.end(); ++it) {
+		if (val == *it) {
+			return true;
+		}
+	}
+	return false;
+}
+
+std::string SolutionFilter::printMat(std::vector<std::vector<int> > v) {
+	std::string s = "";
+	for (std::vector<std::vector<int> >::iterator it = v.begin(); it != v.end(); ++it) {
+		s += "<";
+		for (std::vector<int>::iterator j = (*it).begin(); j != (*it).end(); ++j) {
+			s += std::to_string(*j) + ", ";
+		}
+		s = s.substr(0, s.length() - 2) + "> \n";
+	}
+	return s;
+}
+
+std::vector<std::vector<int> > SolutionFilter::getUniques(void) {
+	std::vector<int> duplicates;
+	std::vector<std::vector<std::vector<int> > > uniques;
+	
+	for (std::vector<std::vector<std::vector<int> > >::iterator i = decodedSolutions.begin(); i != decodedSolutions.end(); ++i) {
+		for (std::vector<std::vector<std::vector<int> > >::iterator j = i + 1; j != decodedSolutions.end(); ++j) {
+			if (!(isIn(i - decodedSolutions.end(), duplicates)) && (i != j) && !(isUnique(*i, *j))) {
+				duplicates.push_back(j - decodedSolutions.begin());
+			}
+		}
+	}
+	
+	for (std::vector<std::vector<std::vector<int> > >::iterator i = decodedSolutions.begin(); i != decodedSolutions.end(); ++i) {
+		if (!isIn(i - decodedSolutions.begin(), duplicates)) {
+			uniques.push_back(*i);
+		}
+	}
+	
+	decodedSolutions = uniques;
+	
+	encodeSolutions();
+	
+	return encodedSolutions;
+	
+}
 
 class Queens {
 	private:
@@ -19,12 +190,7 @@ class Queens {
 		void setQueen(int, int);
 		void removeQueen(int);
 		bool checkPosValidity(int);
-		bool isHomomorphism(std::vector<int> v1, std::vector<int> v2);
-		bool isIn(int, std::vector<int>);
-		void rotate90(std::vector<int>&);
-		std::vector<int> mirror(std::vector<int>);
-		std::vector<int> rotate(int, std::vector<int>);
-		
+				
 	public:
 		Queens(int);
 		~Queens();
@@ -45,81 +211,6 @@ Queens::Queens(int len) {
 
 Queens::~Queens() {}
 
-std::vector<int> Queens::mirror(std::vector<int> v) {
-	int i, j;
-	std::vector<std::vector<int> > mirror, matrix;
-	
-	for (i = 0; i < n; ++i) {
-		std::vector<int> row;
-		for (j = 0; j < n; ++j) {
-			row.push_back(0);
-		}
-		matrix.push_back(row);
-	}
-	
-	for (std::vector<int>::iterator it = v.begin(); it != v.end(); ++it) {
-		matrix[it - v.begin()][*it] = 1;
-	}
-	
-	//mirror it up
-	
-	for (std::vector<std::vector<int> >::iterator it = matrix.begin(); it != matrix.end(); ++it) {
-		std::vector<int> mirrorRow;
-		for (std::vector<int>::reverse_iterator rit = (*it).rbegin(); rit != (*it).rend(); ++rit) {
-			mirrorRow.push_back(*rit);
-		}
-		mirror.push_back(mirrorRow);
-	}
-	
-	v.clear();
-	
-	for (std::vector<std::vector<int> >::iterator it = mirror.begin(); it != mirror.end(); ++it) {
-		for (std::vector<int>::iterator innerIt = (*it).begin(); innerIt != (*it).end(); ++innerIt) {
-			if (*innerIt != 0) {
-				v.push_back(innerIt - (*it).begin());
-			}
-		}
-	}
-	
-	return v;
-}
-
-void Queens::rotate90(std::vector<int>& v) {
-	int i, j;
-	std::vector<std::vector<int> > matrix, rotatedMatrix;
-	//init matrix
-	for (i = 0; i < n; ++i) {
-		std::vector<int> row;
-		for (j = 0; j < n; ++j) {
-			row.push_back(0);
-		}
-		matrix.push_back(row);
-	}
-	
-	for (std::vector<int>::iterator it = v.begin(); it != v.end(); ++it) {
-		matrix[it - v.begin()][*it] = 1;
-	}
-	
-	//init rotatedMatrix
-	
-	for (i = 0; i < n; ++i) {
-		std::vector<int> rotatedRow;
-		for (j = 0; j < n; ++j) {
-			rotatedRow.push_back(matrix[n - j - 1][i]);
-		}
-		rotatedMatrix.push_back(rotatedRow);
-	}
-	
-	//re-encode matrix to 1D vector
-	v.clear();
-	for (std::vector<std::vector<int> >::iterator it = rotatedMatrix.begin(); it != rotatedMatrix.end(); ++it) {
-		for (std::vector<int>::iterator innerIt = (*it).begin(); innerIt != (*it).end(); ++innerIt) {
-			if (*innerIt != 0) {
-				v.push_back(innerIt - (*it).begin());
-			}
-		}
-	}
-}
 
 std::string Queens::printVector(std::vector<int> v) {
 	int i;
@@ -130,78 +221,11 @@ std::string Queens::printVector(std::vector<int> v) {
 	return s.substr(0, s.length() - 2) + ">";
 }
 
-std::vector<int> Queens::rotate(int rotations, std::vector<int> v) {
-	int i;
-	
-	for (i = 0; i < rotations; ++i) {
-		rotate90(v);
-	}
-	
-	return v;
-}
-
-bool Queens::isIn(int val, std::vector<int> v) {
-	for (std::vector<int>::iterator it = v.begin(); it != v.end(); ++it) {
-		if (val == *it) {
-			return true;
-		}
-	}
-	return false;
-}
-
-bool Queens::isHomomorphism(std::vector<int> v1, std::vector<int> v2) {
-	int i;
-	for (i = 0; i < 4; ++i) {
-		
-		v2 = rotate(1, v2);
-		if (v1 == v2) {
-			std::cout << printVector(v1) << " equals " << printVector(v2) << std::endl;
-			return true;
-		}
-	}
-	
-	v2 = mirror(v2);
-	
-	for (i = 0; i < 4; ++i) {
-		v2 = rotate(1, v2);
-		if (v1 == v2) {
-			return true;
-		}
-	}
-	return false;
-}
 
 void Queens::findSolutions(void) {
-	int i;
-	bool alreadyPresent;
-	std::vector<int> homomorphisms;
-	std::vector<std::vector<int> > uniqueSolutions;
-	
 	solve(0);
-	
-	for (std::vector<std::vector<int> >::iterator it = solutions.begin(); it != solutions.end(); ++it) {
-		for (std::vector<std::vector<int> >::iterator innerIt = it; innerIt != solutions.end(); ++innerIt) {
-			if ((!isIn(it - solutions.begin(), homomorphisms)) && (*it != *innerIt) && (isHomomorphism(*it, *innerIt))) {
-				homomorphisms.push_back(innerIt - solutions.begin());
-			}
-		}
-	}
-	
-	std::cout << "Here are the homos sir " << printVector(homomorphisms) << std::endl;
-	
-	//for (std::vector<int>::iterator it = homomorphisms.begin(); it != homomorphisms.end(); ++it) {
-	//	std::cout << "a homo is " << *it << std::endl;
-	//}
-	
-	//std::cout << "fuck a duckK" << std::endl;
-	for (std::vector<std::vector<int> >::iterator it = solutions.begin(); it != solutions.end(); ++it) {
-		//std::cout << it - solutions.begin() << std::endl;
-		if (!isIn(it - solutions.begin(), homomorphisms)) {
-			uniqueSolutions.push_back(*it);
-		}
-	}
-	solutions = uniqueSolutions;
-	
+	SolutionFilter theFilter(solutions);
+	solutions = theFilter.getUniques();
 }
 
 bool Queens::solve(int q) {
@@ -218,9 +242,6 @@ bool Queens::solve(int q) {
 			else if(solve(q + 1)) {
 				return true;
 			}
-		}
-		else {
-			std::cout << printBoard(queenPositions) << std::endl;
 		}
 	}
 	removeQueen(q);
@@ -329,7 +350,6 @@ int main(int argc, const char *argv[]) {
 	std::cin >> n;
 
 	Queens q(n);
-	//q.solve(0);
 	q.findSolutions();
 	std::cout << q.printSolutions() << std::endl;
 	std::cout << q.numSolutions() << std::endl;
