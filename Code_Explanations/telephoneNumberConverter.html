@@ -1,0 +1,97 @@
+<h2>Daily Program for 5/29/2013:</h2>
+Today as I was going about my daily business I realized that I needed to call a standard 1-800-SME-THNG number. It just so happened that my phone back-light wasn't working so I couldn't see the letter maps between the digits on my phone and the Latin Alphabet characters that make up the toll-free number. After looking up the standard mapping scheme on Wikipedia, I decided that it would be fun to program a simple phone number with characters to all numeric phone number string. So, our goal for today will to take a phone number of the form 1-800-SME-THNG as input and return the string "1-800-763-8464". This isn't exactly the most utilitarian program ever, but I had fun writing it so I hope that you continue reading!
+<h3>Problem Statement for the Phone Number Converter:</h3>
+Take an std::string of arbitrary length as input which represents a phone number and change any Latin Alphabet characters into their appropriate digit equivalent by using the standard letter mapping schema (according to <a href="http://en.wikipedia.org/wiki/Telephone_keypad" target="_blank">Wikipedia</a>). Also, control for dash characters ("-"'s) to allow for any country codes.
+<h3>Code:</h3>
+[sourcecode language="cpp"]
+#include <iostream>
+#include <string>
+
+#define ASCII_UPPER_CASE_SHIFT 65
+#define ASCII_LOWER_CASE_SHIFT 97
+
+bool isDigit(char c) {
+  return (c >= '0' && c <= '9');
+}
+
+int letterMap(char c) {
+  int outDigit, asciiShift;
+
+  //shifts the ASCII value of the character depending on whether it is upper or lower case
+  if (c >= ASCII_UPPER_CASE_SHIFT && c < ASCII_UPPER_CASE_SHIFT + 26) {
+    asciiShift = c - ASCII_UPPER_CASE_SHIFT;
+  }
+  else if (c >= ASCII_LOWER_CASE_SHIFT && c < ASCII_LOWER_CASE_SHIFT) {
+    asciiShift = c - ASCII_LOWER_CASE_SHIFT;
+  }
+  else {
+    return -1;
+  }
+
+  outDigit = asciiShift / 3;
+
+  if (outDigit <= 4) {
+    return outDigit + 2;
+  }
+  else {
+    if (asciiShift >= 15 && asciiShift < 19) {
+      return 7;
+    }
+    else if (asciiShift >= 19 && asciiShift < 22) {
+      return 8;
+    }
+    else {
+      return 9;
+    }
+  }
+}
+
+std::string generateTelephoneNumber(std::string s) {
+  int i;
+  std::string strDigits = "";
+
+  for (i = 0; i < s.length(); ++i) {
+    if (isDigit(s[i]) || s[i] == '-') {
+      strDigits += s[i];
+    }
+    else {
+      strDigits += std::to_string(letterMap(s[i]));
+    }
+  }
+  return strDigits;
+}
+
+int main(void) {
+  int i,j;
+  std::string s;
+  std::cout << "What is the telephone number with Latin characters in it that you would like to convert?\n --> ";
+  std::cin >> s;
+
+  std::cout << "The telephone number is " << generateTelephoneNumber(s) << std::endl;
+  return 0;
+}
+[/sourcecode]
+<h3>Sample Session:</h3>
+<pre>What is the telephone number with Latin characters in it that you would like to convert?
+ --&gt; 1-800-bra-denl
+The telephone number is 1-800-272-3365</pre>
+<h3>Explanation:</h3>
+Our program isn't terribly complex, but there are portions of it that may be a little confusing, so let's take a look at each of our functions in turn. In order to solve the problem of taking a generic telephone number with Latin Alphabet characters in it and transforming it to the letter mapped equivalent we define the following functions:
+<ul>
+	<li><em>isDigit</em> := Takes a character as input and returns a boolean signifying whether the character is a digit or not.</li>
+	<li><em>letterMap</em> := Takes a character as input and returns the digit mapping that the given character maps to.</li>
+	<li><em>generateTelephoneNumber</em> := Takes an std::string as input and returns the a string containing the all-numeric equivalent of the input string.</li>
+	<li><em>main</em> := Takes no inputs and returns an integer to the OS signifying exit success.</li>
+</ul>
+Now that you at least know what the functions I defined are, let's take a closer look at each of them!
+
+The <em>isDigit</em> function has a library equivalent in the <em>cstdlib</em> library, but I decided to re-implement it for the purposes of giving you a very gentle introduction to ASCII codes that represent integers. Since all Latin Alphabet characters are internally represented by an integral ASCII code and since all of the digit characters are laid out in a linear sequence, we can use the comparison operators &gt;= and &lt;= to check whether a given character has an ASCII value that falls in a given range. Since the characters in the set {'0,'1','2','3','4','5','6','7','8','9'} have ASCII codes from 0 -&gt; 9 we can check to see if any given character is a digit by simply testing whether its ASCII code is between 0 and 9. Since we are returning a boolean, we can just return the result of the comparison of the input character and the range of ASCII encodings that are used by the integers.
+
+The <em>letterMap</em> function seems to be far more complex than the <em>isDigit</em> method, but is actually not all that hard to understand.
+We first check to see if the input character is an upper-case character or a lower-case character by checking to see if it falls in the respective ranges of the two groups on the ASCII value table. For our purposes, let's assume that we are inputting an upper-case character. Since the ASCII encodings for the upper-case Latin Alphabet characters fall linearly in the range 65-&gt;91 (inclusive) we can set an integer variable, <em>asciiShift</em>, equal to the result of the input character's ASCII code minus the <em>ASCII_UPPER_CASE_SHIFT</em> preprocessor constant that we defined to be equal to 65. This gives us an index to the character in an imaginary alphabet string where 0 = 'A' and 25 = 'Z'. With this in mind we then define another integer, <em>outDigit</em>, to be equal to the result of <em>asciiShift</em> divided by 3. Since the character mapping on a phone digit pad to Latin Alphabet characters is by and large done in groups of three, this makes sense. We have to be careful since the digit 7 and 9 are mapped to four characters. We proceed by simply returning the outDigit plus 2 (since the letter mapping start with the 2 digit) if the value of <em>outDigit</em> is less than or equal to 4. Remember that to get the true value of the digit that the character is mapped to we must add 2 to the <em>outDigit</em> integer, which means that any of the characters mapped to the digit 6 or less are done. Since the digit 7 maps to four characters and since 9 also maps to four characters we just enter an if-block that separates the outputs by an index range to our imaginary alphabet string. We return whenever we reach a digit that the character is mapped to and are done.
+
+The function <em>generateTelephoneNumber</em> takes an std::string representing a generic phone number with Latin Alphabet characters embedded in it as input and returns an std::string representing the same phone number that is purely-numeric. We do this by initializing an empty std::string and looping through all of the characters in the input string, In our for-loop, if the character is a dash or is a digit then we simply add it to the output string and if it is something different then we call the <em>letterMap</em> function with the current character and then concatenate the std::string equivalent of the output to our growing outstring. Once we have iterated through all of the characters in the input string we return our output string and are done.
+
+The <em>main</em> function is super boring in this program and only takes a std::string from the user and returns the purely numeric equivalent of the passed in phone number to the user. Overall, this one is just user input and output and shouldn't give you any problem at all.
+
+I hope you enjoyed this program. I thought it was a fun idea for a small program! Tell me what you think in the comments below! Keep on programming!

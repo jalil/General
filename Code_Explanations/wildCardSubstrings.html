@@ -1,0 +1,57 @@
+<h2>Daily Program for 5/12/2013:</h2>
+Today we will be writing a function which takes a wild card string of the form "a*b" and returns the substring formed by the sequence of the characters starting with 'a' and ending with 'b' from a search string. Additionally, we will only be returning the first substring that meets our wild card parameter. This program isn't too difficult and is a fun programming practice problem!
+<h3>Problem Statement for Wild Card Substrings:</h3>
+Create a function which takes two strings as input.The first string is to be the search string and the second string will be the wild card string of the form "a*b" where 'a' is the first character in the substring and 'b' is the last character in the substring. Return the substring if one is found. If no substring is found, then return an empty std::string.
+<h3>Code:</h3>
+[sourcecode language="cpp"]
+#include <iostream>
+#include <string>
+
+std::string wildCardSearch(std::string searchString, std::string wildString) {
+   int i, j;
+   std::string returnString = "";
+
+   for (i = 0; i < searchString.length(); ++i) {
+      if (searchString[i] == wildString[0]) {
+         for (j = i; j < searchString.length(); ++j) {
+            returnString += searchString[j];
+            if (searchString[j] == wildString[2]) {
+               break;
+            }
+         }
+         if (returnString[returnString.length() - 1] == wildString[2]) {
+            return returnString;
+         }
+      }
+   }
+   return "";
+}
+
+int main(int argc, const char *argv[]) {
+   std::string sstr, wcstr, ostr;
+
+   std::cout << "What is the search string?\n  -->  ";
+   std::cin >> sstr;
+   std::cout << "What are the wildcard parameters? (ex. l*p)\n  -->  ";
+   std::cin >> wcstr;
+
+   ostr = wildCardSearch(sstr, wcstr);
+
+   if (ostr != "") {
+      std::cout << "The wild card substring found was'" << ostr << "'" << std::endl;
+   }
+   else {
+      std::cout << "No wild card substring with the parameters '" << wcstr << "' exists in '" << sstr << "'" << std::endl;
+   return 0;
+}
+[/sourcecode]
+<h3>Sample Session:</h3>
+<pre>What is the search string?
+  --&gt;  bradeniskindaawesome
+What are the wildcard parameters? (ex. l*p)
+  --&gt;  k*e
+The wild card substring found was 'kindaawe'</pre>
+<h3>Explanation:</h3>
+This was a fun program for me to write, so let's dive right into the details. We only define a single function, <em>wildCardSearch</em>, which takes a search string and a wild card string as parameters. The search string is self-explanatory as it is simply the string being searched. The wild card string contains our parameters for the substring that we would like returned. In our wild card string we simply need the first and last characters with an asterisk between them as a little syntactic sugar (i.e. the string "a*c" is a legal input). We define three local variables of which two are integer loop variables and the other is our return string (aptly named <em>returnString</em>). We initialize our return string with an empty string so that we can amalgamate our substring into it.We then loop through all of the characters in the search string until we find a match to the first character in our wild card parameter. After we have found our first match, we simply start adding the characters found in a linear sequence to our return string until we find the ending character from our wild card parameter is found or we reach the end of the string. If the end of the string is found then we return "" as we did not find a valid substring. If we find the closing character in our search string from the wild card parameter then we add the character to our return string and return it.
+
+The main function only handles input and output operations, so we won't really discuss it. Thanks for reading and keep on programming!

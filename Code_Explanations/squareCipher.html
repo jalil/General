@@ -1,0 +1,139 @@
+<h2>Daily Program for 5/21/2013</h2>
+Welcome back and happy first day of summer (for you US readers, anyway)! Today we will be implementing a classic encryption algorithm called the square code which is a methodology for composing secret messages. In the square code, we strip all spaces from the text and we write all of the characters into a square. For example, the sentence "If man was meant to stay on the ground god would have given us roots" is 54 characters long and is then written into a rectangle with 7 rows and 8 columns as in the following:
+<pre><strong>
+                ifmanwas
+                meanttos        
+                tayonthe
+                groundgo
+                dwouldha
+                vegivenu
+                sroots
+</strong></pre>
+The encoded message is obtained by reading down the columns going left to right. For example, the message above is encoded as:
+<pre><strong>imtgdvs fearwer mayoogo anouuio 
+ntnnlvt wttddes aohghn  sseoau</strong></pre>
+This is a fun position cipher and is a good introductory algorithm to the art and science of cryptography.
+<h3>Problem Statement for the Square Code Program:</h3>
+Take a string from the user and strip out all of the white space and form the square from the rectangle based off of a non-constant row width. Return the square to the user as well as the fully encrypted cipher text.
+<h3>Code:</h3>
+[sourcecode language="cpp"]
+#include <iostream>
+#include <string>
+#include <vector>
+
+std::string stripWhitespace(std::string s) {
+   int i;
+   while (s.find(" ") != -1) {
+      i = s.find(" ");
+
+      if (i == 0) {
+         s = s.substr(1, s.length());
+      else if (i == s.length() - 1) {
+         s = s.substr(0, s.length() - 1);
+      }
+      else {
+         s = s.substr(0, i) + s.substr(i + 1, s.length());
+      }
+   }
+   return s;
+}
+
+int findDimensions(std::string s) {
+   int len= s.length(), currEst = 1;
+   while (!(currEst * currEst >= len)) {
+      currEst += 1;
+   }
+   return currEst;
+}
+
+std::vector<std::string> makeSquare(std::string s) {
+   int i = 0, j, rowLen = findDimensions(s);
+   std::vectors<std::string> v;
+   while (i != s.length()) {
+      std::string stringElement = "";
+      for (j = 0; j < rowLen && i != s.length(); ++j) {
+         stringElement += s[i];
+         ++i;
+      }
+      v.push_back(stringElement);
+   }
+   return v;
+}
+
+std::string createCipherText(std::vector<std::string> v) {
+   int i;
+   std::string s = "";
+   for (i = 0; i < v[0].length(); ++i) {
+      for (std::vector<string<::iterator it = v.begin(); it != v.end(); ++it) {
+         if (i >= (*it).length()) {
+            s += ' ';
+         }
+         else {
+            s += (*it)[i];
+         }
+      }
+      s += ' ';
+   }
+   return s;
+}
+
+std::string encrypt(std::string s) {
+   std::vector<string> sVector;
+   sVector = makeSquare(stripWhitespace(s));
+   return createCipherText(sVector);
+}
+
+int main(int argc, const char *argv[]) {
+   std::string s;
+   std::vector<string> sVector;
+
+   std::cout << "DATA INITIALIZATION:\n Give me a sentence to encode: ";
+   std::getline(std::cin, s);
+
+   sVector = makeSquare(stripWhiteSpace(s));
+
+   std::cout << "\nCODE SQUARE:" << std::endl;
+
+   for (std::vector<string>::iterator it = sVector.begin(); it != sVector.end(); ++it) {
+      std::cout << "Row " << sVector.end() - it << ": " << *it << std::endl;
+   }
+
+   std::cout << "\nCIPHER TEXT:" << std::endl;
+   std::cout << "The sentence '" << s << "' has become '" << encrypt(s) << "'" << std::endl;
+   return 0;
+}
+[/sourcecode]
+<h3>Sample Session:</h3>
+<pre>DATA INITIALIZATION:
+ Give me a sentence to encode: i am a great programmer
+
+CODE SQUARE:
+Row 4: iamag
+Row 3: reatp
+Row 2: rogra
+Row 1: mmer
+
+CIPHER TEXT:
+The sentence 'i am a great programmer' has become 'irrm aeom mage atrr gpa'</pre>
+<h3>Explanation:</h3>
+In our solution to the square code encryption methodology we define a few functions:
+<ol>
+	<li><em>stripWhitespace</em></li>
+	<li><em>findDimensions</em></li>
+	<li><em>makeSquare</em></li>
+	<li><em>createCipherText</em></li>
+	<li><em>encrypt</em></li>
+</ol>
+We also define a <em>main</em> function, but it is not very significant. Let's take a closer look at each of these functions in order to see how the entire program works.
+
+<em></em>Our first function is the <em>stripWhiteSpace</em> function which takes an std::string as input and returns the same std::string with all of its space characters removed. This is accomplished by using a while loop with the loop invariant specifying that the <em>find</em> method for std::strings does not return a value of <strong>-1</strong> which simply means that the character was not found in the string. We then remove the space by creating a substring of the input std::string which is then predicated on the placement of the space character in the string.
+
+The next function I defined was the <em>findDimensions</em> string which takes an std::string as input and returns an integer representing the constant border dimensions of the square we will be creating. Since we are creating a square, we want to find the smallest border length where the length squared is equal to or greater than the number of characters in the input string. We find this value by initializing an integer <em>i</em> which we increment until the value of <em>i</em> squared is greater than or equal to the length of the input string. Once the condition is met, we return the integer which will serve as the width and height of our square.
+
+The next function we define is the <em>makeSquare</em> function which takes an std::string as input and returns a vector of strings where each of the strings in the vector are just linear slices of the input string with length equal to the output of the <em>findDimensions </em>function. We do this by using a while-loop with an inner for-loop. The while-loop continues until its loop variable <em>i</em> is equal to the number of characters in the input string and the for-loop continues in chunks of size given by the <em>findDimensions</em> function. Also, we re-specify our outer loop invariant in the inner loop since the inner loop will not be broken by the outer-loop's invariant becoming true. We have to do this since <em>findDimensions</em> returns the first perfect square that is greater than or equal to the length of the input string and since it may be greater than the length we must stop the loop before it overruns the string's upper bound. We add all of the substrings to the vector and return it.
+
+In our <em>createCipherText</em> function we take a vector of strings as input and return a single string. Essentially, our goal for this function is to read the columns of the square and return the string representations of those columns in a single string. We do this with a pair of for-loops where the outer for-loop iterates through the characters in the substring and the inner for-loop iterates through the strings in the vectors. This means that when the outer for-loop has a value of 0 then we are reading all of the characters in the string vector with an index of 0. We comma delimit our columns and return the encoded string.
+
+I also defined an <em>encrypt </em>function which simply calls all of the other functions in turn in order to create a nice single function call for any future string encodings we may want to perform. This obliterates the need for us to remember the correct order to call the other functions we have defined.
+
+The <em>main</em> function is boring and just takes input from the user so I won't discuss it! I hope you enjoyed today's program!

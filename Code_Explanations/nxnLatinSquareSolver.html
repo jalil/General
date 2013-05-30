@@ -1,0 +1,317 @@
+<h2>Daily Program for 5/23/2013:</h2>
+Today we will continue with an expanded version of <a title="C++ – Latin Square Solver" href="http://bradenlenz.com/2013/05/22/c-latin-square-solver/" target="_blank">yesterday's Latin Square Solver</a>. We will be expanding our solution to be compatible with an arbitrarily sized Latin Square with width and height of <em>N</em>. In addition to generalizing our solution, I have included updated user input and output operations as well as improving the <em>LatinSquare</em> class architecture, so be sure to keep on reading. If you haven't taken the time to read my <a title="C++ – Latin Square Solver" href="http://bradenlenz.com/2013/05/22/c-latin-square-solver/" target="_blank">Latin Square solver post</a>, then I highly suggest that you do since I will largely be discussing improvements upon my original code in today's post.
+<h3>Problem Statement for the NxN Latin Square Solver:</h3>
+Take an integer from the user representing the dimensions of the Latin square as well as constant values within the square and solve the Latin Square puzzle for that square given by the dimensions NxN where the values exist in the range (1..N).
+<h3>Code:</h3>
+[sourcecode language="cpp"]
+#include <iostream>
+#include <vector>
+#include <string>
+#include <utility>
+
+class LatinSquare {
+  private:
+    int n;
+    std::vector<std::vector<int> > square;
+    int numDigits(int);
+    std::string printCell(int, int);
+    bool checkCol(int, int);
+    bool checkRow(int, int);
+    std::pair<int, int> getNextPos(int, int);
+  public:
+    LatinSquare(std::vector<std::vector<int> >);
+    ~LatinSquare();
+    std::string printPuzzle(void);
+    int getPosition(int, int);
+    void setPosition(int, int, int);
+    void initConstants(void);
+    bool checkPosValidity(int, int);
+    bool solve(int, int);
+};
+
+int LatinSquare::numDigits(int num) {
+  int d = 0;
+
+  while (num != 0) {
+    num /= 10;
+      ++d;
+  }
+  return d;
+}
+
+std::string LatinSquare::printCell(int h, int c) {
+  int i, lenDelta;
+  std::string s = " ";
+
+  lenDelta = numDigits(h) - numDigits(c);
+
+  for (i = 0; i < lenDelta; ++i) {
+    s += ' ';
+  }
+
+  if (c != 0) {
+    s += std::to_string(c) + " |";
+  }
+  else {
+    s += " |";
+  }
+
+  return s;
+}
+
+std::string LatinSquare::printPuzzle(void) {
+  std::string puzzle, topAndBottom(((numDigits(n) + 3)* square.size()) + 1, '-');
+  puzzle += topAndBottom + '\n';
+  for (std::vector<std::vector<int> >::iterator it = square.begin(); it != square.end(); ++it) {
+    std::string s = "|";
+    for (std::vector<int>::iterator vit = (*it).begin(); vit != (*it).end(); ++vit) {
+      s += printCell(n, *vit);
+    }
+  puzzle += s + '\n';
+  }
+
+  return puzzle + topAndBottom;
+}
+
+LatinSquare::LatinSquare(std::vector<std::vector<int> > vvi) {
+  n = vvi.size();
+  square = vvi;
+}
+
+LatinSquare::~LatinSquare(){}
+
+int LatinSquare::getPosition(int r, int c) {
+  if ((r > n - 1 || r < 0) || (c > n - 1 || c < 0)) {
+    return -1;
+  }
+  else {
+    return square[r][c];
+  }
+}
+
+void LatinSquare::setPosition(int r, int c, int v) {
+  if (!((r > n - 1 || r < 0) || (c > n - 1 || c < 0))) {
+    square[r][c] = v;
+  }
+}
+
+void LatinSquare::initConstants(void) {
+  int r,c,i,j,v;
+
+  std::cout << "\nDIRECTIONS:\n 1: The grid position (0,0) is the upper left corner\n 2: Row, columnar, and cell values must be between 0 and N where N is the row length\n" << std::endl;
+  std::cout << "How many constant values would you like to add?\n  -->  ";
+  std::cin >> j;
+
+  for (i = 0; i < j; ++i) {
+    std::cout << "CONSTANT ELEMENT " << i + 1 << ":\nGive me the row value: ";
+    std::cin >> r;
+
+    std::cout << "Give me the column value: ";
+    std::cin >> c;
+
+    std::cout << "Give me the cell value: ";
+    std::cin >> v;
+
+    setPosition(r,c,v);
+  }
+}
+
+bool LatinSquare::checkCol(int c, int v) {
+  int i, count = 0;
+
+  for (i = 0; i < n; ++i) {
+    if (square[i][c] == v) {
+      ++count;
+    }
+  }
+
+  return (count == 1);
+}
+
+bool LatinSquare::checkRow(int r, int v) {
+  int j, count = 0;
+
+  for (j = 0; j < n; ++j) {
+    if (square[r][j] == v) {
+      ++count;
+    }
+  }
+
+  return (count == 1);
+}
+
+bool LatinSquare::checkPosValidity(int r, int c) {
+  int v = square[r][c];
+  return (checkCol(c, v) && checkRow(r, v));
+}
+
+std::pair<int,int> LatinSquare::getNextPos(int r, int c) {
+  int newRow, newCol;
+  if (r == n - 1 && c == n - 1) {
+    newRow = newCol = 0;
+  }
+  else if (c == n - 1) {
+    newRow = r + 1;
+    newCol = 0;
+  }
+  else {
+    newRow = r;
+    newCol = c + 1;
+  }
+
+  return std::make_pair(newRow,newCol);
+}
+
+bool LatinSquare::solve(int r, int c) {
+  int i;
+  std::pair<int,int> p = getNextPos(r,c);
+  if (getPosition(r,c) != 0) {
+    return (solve(std::get<0>(p), std::get<1>(p)));
+  }
+  else {
+    for (i = 1; i < n + 1; ++i) {
+      setPosition(r,c,i);
+      if (checkPosValidity(r,c)) {
+        if (r == n - 1 && c == n - 1 || solve(std::get<0>(p), std::get<1>(p))) {
+          return true;
+        }
+      }
+    }
+    setPosition(r,c,0);
+    return false;
+  }
+}
+
+std::vector<std::vector<int> > initSquare(int n) {
+  int i,j;
+  std::vector<std::vector<int> > v;
+  for (i = 0; i < n; ++i) {
+    std::vector<int> vPrime;
+    for (j = 0; j < n; ++j) {
+      vPrime.push_back(0);
+    }
+    v.push_back(vPrime);
+  }
+  return v;
+}
+
+int main(int argc, const char *argv[]) {
+  int n;
+  while (true) {
+    std::cout << "What are the dimensions of the NxN square?\n  N = ";
+    std::cin >> n;
+
+    if (n < 2) {
+      std::cout << "The minimum grid has an N value of 2" << std::endl;
+    }
+    else {
+      break;
+    }
+  }
+
+  LatinSquare puzzle(initSquare(n));
+  puzzle.initConstants();
+
+  std::cout << "\nYour initialized puzzle:" << std::endl;
+
+  std::cout << puzzle.printPuzzle() << std::endl;
+
+  std::cout << "\nYour solved puzzle:" << std::endl;
+
+  puzzle.solve(0,0);
+
+  std::cout << puzzle.printPuzzle() << std::endl;
+
+  return 0;
+}
+[/sourcecode]
+<h3>Sample Session:</h3>
+<pre>What are the dimensions of the NxN square?
+  N = 11
+
+DIRECTIONS:
+ 1: The grid position (0,0) is the upper left corner
+ 2: Row, columnar, and cell values must be
+    between 0 and N where N is the row length
+
+How many constant values would you like to add?
+  --&gt;  5
+CONSTANT ELEMENT 1:
+Give me the row value: 0
+Give me the column value: 0
+Give me the cell value: 1
+CONSTANT ELEMENT 2:
+Give me the row value: 1
+Give me the column value: 1
+Give me the cell value: 2
+CONSTANT ELEMENT 3:
+Give me the row value: 2
+Give me the column value: 2
+Give me the cell value: 3
+CONSTANT ELEMENT 4:
+Give me the row value: 3
+Give me the column value: 3
+Give me the cell value: 4
+CONSTANT ELEMENT 5:
+Give me the row value: 4
+Give me the column value: 4
+Give me the cell value: 5
+
+Your initialized puzzle:
+--------------------------------------------------------
+|  1 |    |    |    |    |    |    |    |    |    |    |
+|    |  2 |    |    |    |    |    |    |    |    |    |
+|    |    |  3 |    |    |    |    |    |    |    |    |
+|    |    |    |  4 |    |    |    |    |    |    |    |
+|    |    |    |    |  5 |    |    |    |    |    |    |
+|    |    |    |    |    |    |    |    |    |    |    |
+|    |    |    |    |    |    |    |    |    |    |    |
+|    |    |    |    |    |    |    |    |    |    |    |
+|    |    |    |    |    |    |    |    |    |    |    |
+|    |    |    |    |    |    |    |    |    |    |    |
+|    |    |    |    |    |    |    |    |    |    |    |
+--------------------------------------------------------
+Your solved puzzle:
+--------------------------------------------------------
+|  1 |  3 |  2 |  5 |  4 |  6 |  7 |  8 |  9 | 10 | 11 |
+|  3 |  2 |  1 |  6 |  7 |  4 |  5 |  9 |  8 | 11 | 10 |
+|  2 |  1 |  3 |  7 |  6 |  5 |  4 | 10 | 11 |  8 |  9 |
+|  5 |  6 |  7 |  4 |  1 |  2 |  3 | 11 | 10 |  9 |  8 |
+|  4 |  7 |  8 |  9 |  5 | 10 | 11 |  1 |  2 |  3 |  6 |
+|  6 |  4 |  5 |  8 |  9 | 11 | 10 |  2 |  1 |  7 |  3 |
+|  7 |  5 |  4 | 10 | 11 |  8 |  9 |  3 |  6 |  1 |  2 |
+|  8 |  9 |  6 | 11 | 10 |  1 |  2 |  4 |  3 |  5 |  7 |
+|  9 | 10 | 11 |  1 |  2 |  3 |  8 |  5 |  7 |  6 |  4 |
+| 10 | 11 |  9 |  3 |  8 |  7 |  1 |  6 |  4 |  2 |  5 |
+| 11 |  8 | 10 |  2 |  3 |  9 |  6 |  7 |  5 |  4 |  1 |
+--------------------------------------------------------</pre>
+<h3>Explanation:</h3>
+In our re-defined class definition, we have added several new methods to our <em>LatinSquare</em> class and have added an integer property <em>n </em>which is the length and height of the square. These new methods are:
+<ol>
+	<li>The <em>numDigits</em> method</li>
+	<li>The <em>printCell </em>method</li>
+	<li>The <em>initConstants</em> method</li>
+</ol>
+We also re-organized our class definition such that the following methods  are now private:
+<ol>
+	<li>The <em>checkCol </em>method</li>
+	<li>The <em>checkRow </em>method</li>
+	<li><em></em>The <em>numDigits</em> method</li>
+	<li>The <em>getNextPos</em> method</li>
+	<li>The <em>printCell </em>method</li>
+</ol>
+These methods were organized as private since their uses are internal to the functionality of the class. For example, the <em>checkRow </em>and <em>checkCol</em> methods are called by the <em>checkPosValidity. </em>Additionally, the <em>numDigits </em>and <em>printCell </em>methods are internal to the <em>printPuzzle </em>method so they were also organized as private. Finally, the <em>getNextPos</em> method is internal to the <em>solve</em> method which is why we re-organized it.
+
+Let's take a closer look at the functions of our new methods. Our first new method is <em>numDigits </em>which takes an integer as input and returns the number of digits in that number. We find the number of digits in the number by dividing the input value by 10 until it becomes zero. Each time we divide the input value by ten we increment a counter by one. Once the input value is zero then we return the counter.
+
+In our <em>printCell </em>method, we take <em>h</em> and <em>c</em> as integral inputs where <em>h</em> is the highest value we can insert into a cell and <em>c</em> is the value we want to add to the current cell being printed. We then find the number of digits in both <em>h</em> and <em>c</em> and perform the computation <em>h - c</em> which gives us a digit delta. We then add as many spaces to our cell string as there are values in the digit delta. This serves to preserve our constant cell width. For example, if <em>h</em> is 11 and <em>c</em> is 5 then we have a digit delta of 1 giving us a format string of "  5 |" instead of " 5 |". This provides an extensible cell printing mechanism so that we can correctly space arbitrarily large integers. Also, we now print an empty cell if the current value of the cell is 0 which makes the initialized puzzle square much closer to a real Latin Square puzzle.
+
+The <em>initConstants </em>method is simply  a user input interface for setting up the start values for our Latin Square puzzle. I decided to merge this code into the class definition instead of leaving it in main function since it makes the <em>LatinSquare </em>class more robust and self-sufficient. In our method, we first take print out some directions as to what input rules are expected and then we take an arbitrary number of constants from the user and add them to the puzzle.
+
+In order to make the program work with an NxN puzzle all we did was replace all of the references to the constant integer 9 with our <em>LatinSquare</em> class property <em>n</em>. Essentially, this just means that we had to change all of our loop invariants to run up until <em>n</em> and change our <em>getNextPos</em> method such that the next position returned is not dependent on the constant 8, but on the value of <em>n - </em><em>1</em>. The framework built last time meant that the necessary changes could have been accomplished by a simple find and replace.
+
+Overall, the program works well and can instantaneously solve empty puzzles up until N values of around 10. Once the puzzle's dimensions get larger than that it starts becoming necessary to initialize the puzzle with some legal constants so that the back-tracking algorithm has some values to work with. I found that specifying around 5% of the constants was sufficient for solving puzzles of arbitrary length, but your mileage may vary.
+
+This has been a fun problem for me and I hope you enjoyed it. I hope that you play with the code! As always, keep up the good programming and I hope to see you again tomorrow!
+
+Also, let me know what you think in the comments below!

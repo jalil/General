@@ -1,0 +1,183 @@
+<h2>Daily Program for 5/24/2013:</h2>
+Today we will not be continuing with <a class="zem_slink" title="Backtracking" href="http://en.wikipedia.org/wiki/Backtracking" target="_blank" rel="wikipedia">back tracking</a> algorithms, because I realized that we need to add a new pseudo-mathematical function to our collective tool-kits in order to find unique solutions to the <a class="zem_slink" title="Eight queens puzzle" href="http://en.wikipedia.org/wiki/Eight_queens_puzzle" target="_blank" rel="wikipedia">N-Queens problem</a> (foreshadowing: that will be tomorrow's program). Anyway, we will need to have a procedure for rotating a matrix by a multiple of 90 degrees. What this means is that we will take a matrix like:
+<pre>&lt; &lt;1, 2&gt;
+  &lt;3, 4&gt; &gt;</pre>
+and transform is into
+<pre>&lt; &lt;3, 1&gt; 
+  &lt;4, 2&gt; &gt;</pre>
+after rotating it 90 degrees one time. In addition to the ability to rotate the matrix by 90 degrees one time we will be defining a function to take an integer as the number of rotations in order to provide a nice API for our rotation algorithm. I know that this isn't exactly the most exciting program, but it is necessary if we want to construct unique solutions to common combinatoric problems.
+<h3>Problem Statement for Rotating a Matrix</h3>
+Define a class <em>Matrix</em> which is internally represented as a vector of vectors of integers. Within your class create a private method called <em>rotate90</em> which rotates the matrix by 90 degrees. Finally, define a method called <em>rotateMatrix</em> which takes a negative or positive integer as input and rotates the figure by 90 degrees as many times as the input commands. For extra credit try to optimize this method (hint: rotating a matrix 5 times is a symmetric relation to rotating a matrix 1 time).
+<h3>Code:</h3>
+[sourcecode language="cpp"]
+#include <iostream>
+#include <string>
+#include <vector>
+
+class Matrix {
+   private:
+      int n;
+      std::vector<std::vector<int> > matrix;
+      void rotate90(void);
+   public:
+      Matrix(std::vector<std::vector<int> >);
+      ~Matrix()
+      std::string printMatrix(void);
+      void rotate(int);
+};
+
+Matrix::Matrix(std::vector<std::vector<int> > v) {
+   matrix = v;
+   n = matrix.size();
+}
+
+Matrix::~Matrix() {}
+
+std::string Matrix::printMatrix(void) {
+   std::string mat = "";
+   for (std::vector<std::vector<int> >::iterator it = matrix.begin(); it != matrix.end(); ++it) {
+      mat += "<";
+      for (std::vector<int>::iterator vit = (*it).begin(); vit != (*it).end(); ++vit) {
+         mat += std::to_string(*vit) + ", ";
+      }
+      mat = mat.substr(0, mat.length() - 2) + "> \n";
+   }
+   return mat;
+}
+
+void Matrix::rotate90(void) {
+   int i,j;
+   std::vector<std::vector<int> > rotV;
+
+   for (i = 0; i < n; ++i) {
+      std::vector<int> rowRot;
+      for (j = 0; j < n; ++j) {
+         rowRot.push_back(matrix[n - j - 1][i]);
+      }
+      rotV.push_back(rowRot);
+   }
+   matrix = rotV;
+}
+
+void Matrix::rotate(int r) {
+   int i, numRotations = r % 4;
+   if (numRotations < 0) {
+      numRotations = 4 + numRotations;
+   }
+
+   for (i = 0; i < numRotations; ++i) {
+      rotate90();
+   }
+}
+
+std::vector<std::vector<int> > initMatrix(void) {
+   int i, j, k, n;
+   std::vector<std::vector<int> > matrix;
+
+   std::cout << "What will the dimensions of your NxN matrix be?\n  N = ";    std::cin >> n;
+
+   for (i = 0; i < n; ++i) {
+      std::vector<int> row;
+      for (j = 0; j < n; ++j) {
+         std::cout << "\nELEMENT IN ROW " << i << " AND COL " << j << ":" << std::endl;
+         std::cout << "What is the value at this coordinate?\n  -->  ";
+         std::cin >> k;
+         row.push_back(k);
+      }
+      matrix.push_back(row);
+   }
+
+   return matrix;
+}
+
+int main(int argc, const char *argv[]) {
+   int rotations;
+   Matrix myMatrix(initMatrix());
+
+   std::cout << "\nYOUR INITIALIZED MATRIX IS:\n" << myMatrix.printMatrix() << std::endl;
+
+   std::cout << "\nHow many 90 degree rotations would you like done?\n  -->  ";
+   std::cin >> rotations;
+
+   myMatrix.rotate(rotations);
+
+   std::cout << "\nYOUR MATRIX AFTER " << rotations << " 90 DEGREE ROTATIONS IS:\n" << myMatrix.printMatrix() << std::endl;
+   return 0;
+}
+[/sourcecode]
+<h3>Sample Session:</h3>
+<pre>What will the dimensions of you NxN matrix be?
+  N = 3
+
+ELEMENT IN ROW 0 AND COL 0:
+What is the value at this coordinate?
+  --&gt;  1
+
+ELEMENT IN ROW 0 AND COL 1:
+What is the value at this coordinate?
+  --&gt;  2
+
+ELEMENT IN ROW 0 AND COL 2:
+What is the value at this coordinate?
+  --&gt;  3
+
+ELEMENT IN ROW 1 AND COL 0:
+What is the value at this coordinate?
+  --&gt;  4
+
+ELEMENT IN ROW 1 AND COL 1:
+What is the value at this coordinate?
+  --&gt;  5
+
+ELEMENT IN ROW 1 AND COL 2:
+What is the value at this coordinate?
+  --&gt;  6
+
+ELEMENT IN ROW 2 AND COL 0:
+What is the value at this coordinate?
+  --&gt;  7
+
+ELEMENT IN ROW 2 AND COL 1:
+What is the value at this coordinate?
+  --&gt;  8
+
+ELEMENT IN ROW 2 AND COL 2:
+What is the value at this coordinate?
+  --&gt;  9
+
+YOUR INITIALIZED MATRIX IS:
+&lt;1, 2, 3&gt; 
+&lt;4, 5, 6&gt; 
+&lt;7, 8, 9&gt; 
+
+How many 90 degree rotations would you like done?
+  --&gt;  -81
+
+YOUR MATRIX AFTER -81 90 DEGREE ROTATIONS IS:
+&lt;3, 6, 9&gt; 
+&lt;2, 5, 8&gt; 
+&lt;1, 4, 7&gt;</pre>
+<h3>Explanation:</h3>
+In our matrix rotation program we define a class and two functions. We define a class called <em>Matrix</em> which is a watered down version of a true mathematical matrix. I only say watered down because I haven't included computational methods and operator overloading, but there is another time for that. In this program, our goal is rotate a matrix in such that the (0,0) coordinate becomes the (N - 1, 0) where the first portion of the coordinate is the row and the second portion is the column. This can be seen visually in the example at the top of this post.
+
+In our <em>Matrix </em>class, we define two properties which are an integer <em>n</em> which specifies the dimension size (i.e. the N from NxN) and a vector of vectors of integers called <em>matrix</em> which is our internal representation of a mathematical matrix. Our class has both of its properties as private fields as well as having a method called <em>rotate90</em> as private. In addition to our private fields, we also specify the following public fields:
+<ul>
+	<li>The class constructor and destructor</li>
+	<li>The <em>printMatrix</em> method</li>
+	<li>The <em>rotate </em>method</li>
+</ul>
+Let's take a closer look at all of these methods!
+
+In our <em>rotate90</em> method we take no inputs and have no outputs. This method takes the <em>matrix</em> property in our instance of the <em>Matrix</em> class and rotates it by 90 degrees. We accomplish this by initializing two loop variables, <em>i</em> and <em>j</em>, <em></em>as well as a vector of vectors of integers which we name <em>rotV</em>. We then enter our outer for-loop wherein we initialize a vector of integers that we call <em>rowRot</em>. <em></em>The <em>rowRot</em> vector represents a new row in the new vector of vectors of integers that we will be constructing which represents the 90-degree rotation of our <em>matrix</em> property. At this point, we enter our inner for-loop and push values into our row vector. We push values according to the following equation:
+<pre><strong>newVector[i][j] = oldVector[n - j - 1][i]</strong></pre>
+Essentially, this means that we are holding a column constant with the <em>i</em> loop variable and taking the last element first in the column first and setting it to the first value in our row. We then take the second to last element in the column and push it to the end of our row and proceed in this fashion until we have copied the reverse of the column into our row. It's a little strange to read the code itself, but you can simply think of the inner for-loop as copying the reverse ordering of the specified column and turning it into a row.  This procedure is then repeated for all of the columns and we now have a 90-degree rotated matrix.
+
+Our <em>rotate</em> method is the nice API for our <em>rotate90</em> method where we take an integer as input and rotate the matrix that many times by 90 degrees. If the input is positive, then we rotate our matrix clock-wise and if it is negative then we rotate it counter-clockwise. A quick observation will tell you that one counter-clockwise rotation is the same a 3 clockwise rotations. Thus, we are able to rotate counterclock-wise without specifying a new method by rotating <strong>4 + numRotations</strong> where <em>numRotations </em>is a negative integer. We optimize this method by making the observation that 81 mod 4 is congruent to 1 mod 4. This makes sense since if we rotate our matrix 4 times then it is at its starting position and so we can simply rotate the matrix <em></em><strong>inputVal mod 4</strong> times to achieve the same effect as simply rotating the matrix <strong>inputVal </strong>times.
+
+Our <em>Matrix</em> class constructor simply takes a vector of vectors of integers as input and sets it equal to the <em>matrix</em> property. Additionally, the <em>n</em> property is initialized to the size of the <em>matrix</em> property's size. The <em>Matrix</em> class destructor is blank since we are not taking any allocating any memory on the heap. As per the norm, we will not have to free any memory from the stack so we keep the destructor empty. Remember that it is probably still a good idea to include it even if it doesn't seem to be doing anything!
+
+The <em>printMatrix </em>method simply creates a string representation of the <em>matrix</em> property and returns it. This is accomplished by creating an std::string and concatenating all of the string representations of the inner vectors to it. These, in turn, are created by concatenating the std::string representations of the integers into each of the vector string representations. To create the string representations of the values, we use the std::to_string function which is a C++11 feature so make sure to use the correct compiler flags when trying to compile this program! Overall, I've included similar functions to this in all of my programs that deal with vectors so far so I am sure that this will be familiar to you.
+
+Outside of the <em>Matrix</em> class, we have the <em>initMatrix</em> and <em>main</em> functions. The <em>initMatrix </em>function simply initializes a vector of vectors of integers based upon user input and the <em>main</em> function simply takes user input for the number of rotations and displays results to the user. Neither of these functions are exceedingly complex so I am sure you'll be able to get them right away.
+
+Thanks for reading and tell me what you think of this program in the comments below! I know that this may have been a little boring, but it will be useful tomorrow when we start isolating unique solutions to the classic N Queens problem!

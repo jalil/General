@@ -1,0 +1,153 @@
+<h2>Daily Program for 5/20/2013:</h2>
+Today we will be creating an expanded version of the <a title="C++ – GPA Calculator" href="http://bradenlenz.com/2013/05/04/c-gpa-calculator/">semester GPA calculator</a>. Instead of using classes I thought that it might be interesting to only STL containers in my solution so my implementation may look a little different then what one may expect. Our goal for today's program is to take a current GPA and number of hours and a couple of different possible grade and course combinations for the next semester. We then return the different possible semester GPAs and their effect on the cumulative GPA. Basically, we will just be seeing what the effect of various hypothetical semesters with different grades on the cumulative GPA.
+<h3>Problem Statement for the Hypothetical GPA Calculator:</h3>
+Take the user's current GPA and number of hours taken as well as many permutations of the next semester as the user wishes and compute the possible outcomes of the next semester on its own as well as when it is combined with the previous semesters.
+<h3>Code:</h3>
+[sourcecode language="cpp"]
+#include <iostream>
+#include <vector>
+#include <utility>
+
+double letterGradeToNum(std::string s) {
+   double out;
+   char c = s[0];
+   switch(c) {
+      case 'a':
+      case 'A':
+         out = 4.0;
+         break;
+      case 'b':
+      case 'B':
+         out = 3.0;
+         break;
+      case 'c':
+      case 'C':
+         out = 2.0;
+         break;
+      case 'd':
+      case 'D':
+         out = 1.0;
+         break;
+      case 'f':
+      case 'F':
+         out = 0.0;
+         break;
+      default:
+         out = 0.0;
+         break;
+   }
+   return out;
+}
+
+std::pair<double, int> computeGPA(std::vector<std::pair<std::string, int> > v) {
+   double sumHours, sumGPA;
+   sumHours = sumGPA = 0.0;
+
+   for (std::vector<std::pair<std::string, int> >::iterator it = v.begin(); it != v.end(); ++it) {
+      sumGPA += letterGradeToNum(std::get<0>(*it)) * std::get<1>(*it);
+      sumHours += std::get<1>(*it);
+   }
+
+   return std::make_pair(sumGPA / sumHours, sumHours);
+}
+
+std::vector<std::vector<std::pair<std::string, int> > > getHypotheticalSemesters(int n) {
+   int i, j, k, m;
+   std::string letterGrade;
+
+   std::vector<std::vector<std::pair<std::string, int> > > hypotheticalSemesters;
+
+   for (i = 0; i < n; ++i) {
+      std::cout << "\nPossible Semester " << i + 1 << ": " << std::endl;
+      std::cout << "\nHow many classes are you considering taking?\n -->  ";
+      std::cin >> m;
+
+      std::vector<std::pair<std::string, int> > semester;
+
+      for (j = 0; j < m; ++j) {
+         std::cout << "\nGive me the letter grade for class << j + 1 << ": ";
+         std::cin >> letterGrade;
+
+         std::cout << "Give me the number of credit hours for the class: ";
+         std::cin >> k;
+
+         semester.push_back(std::make_pair(letterGrade, k));
+      }
+      hypotheticalSemesters.push_back(semester);
+   }
+   return hypotheticalSemesters;
+}
+
+std::vector<std::pair<double, int> > hypotheticalGPA(std::vector<std::vector<std::pair<std::string, int> > > v) {
+   std::vector<std::pair<double, int> > dv;
+   for (std::vector<std::vector<std::pair<std::string, int> > >::iterator it = v.begin(); it != v.end(); ++it) {
+      dv.push_back(computeGPA(*it));
+   }
+   return dv;
+}
+
+int main(int argc, const char *argv[]) {
+   int n, numHours;
+   double gpaSoFar;
+   std::string grade;
+
+   std::vector<std::pair<double, int> > gpas;
+
+   std::cout << "How many credit hours have you taken?\n  -->  ";
+   std::cin >> numHours;
+   std::cout << "What is your current GPA?\n  -->  ";
+   std::cin >> gpaSoFar;
+
+   std:cout << "How many hypothetical semesters would you like to compute?\n  -->  ";
+   std::cin >> n;
+
+   gpas = hypotheticalGPA(getHypotheticalSemesters(n));
+
+   std::cout << "\nOutcomes of the possible semesters:" << std::endl;
+   for (std::vector<std::pair<double, int> >::iterator it = gpas.begin(); it != gpas.end(); ++it) {
+      std::cout << "In semester " << gpas.end() - it << " you would have a semester GPA of " << std::get<0>(*it) << " and an overall GPA of " << (gpaSoFar * numHours + std::get<0>(*it) * std::get<1>(*it)) / (numHours + std::get<1>(*it)) << std::endl;
+   }
+   return 0;
+}
+[/sourcecode]
+<h3>Sample Session:</h3>
+<pre>How many credit hours have you taken?
+  --&gt;  109
+What is your current GPA?
+  --&gt;  3.9
+How many hypothetical semesters would you like to compute?
+  --&gt;  1
+
+Possible Semester 1: 
+
+How many classes are you considering taking?
+  --&gt;  3
+
+Give me the letter grade for class 1: A
+Give me the number of credit hours for the class: 5
+
+Give me the letter grade for class 2: B
+Give me the number of credit hours for the class: 5
+Give me the letter grade for class 3: A
+Give me the number of credit hours for the class: 4
+In semester 1 you would have a semester GPA of 3.64286 and an overall GPA of 3.87073</pre>
+<h3>Explanation:</h3>
+Today's program is slightly more complex than normal, so let's decompose our solution into functions and discuss each one in turn. We have the following functions:
+<ul>
+	<li><em>letterGradeToNum</em></li>
+	<li><em>computeGPA</em></li>
+	<li><em>getHypotheticalSemesters</em></li>
+	<li><em>hypotheticalGPA</em></li>
+	<li><em>main</em></li>
+</ul>
+In the <em>letterGradeToNum </em>function we take an std::string as input and return a double representing the numeric GPA correspondence to a given letter grade. Essentially we take a string like "A+" and return 4.0. We accomplish this by using a switch-statement on the character at the zeroth index of the input string.
+
+We then have the <em>computeGPA </em>function  which takes a vector of pairs of strings and integers as input and returns a pair of a double and integer. The input vector represents a given semester and contains pairs of strings and integers of which each pair represents a single class and the string is letter grade and the integer is the number of credit hours for the class. In this function we define two doubles for the sum of credit hours in the semester and the GPA sum so far. We then add up all of the integers from the pairs into the sum of hours and add up all of the GPAs multiplied by the credit hours into the sum of GPA double. Once we have iterated through all of the pairs we return a pair given by the semester GPA and the summation of the hours taken in the semester.
+
+In our <em>getHypotheticalSemesters</em> function we take an integer <em>n </em>and return a vector of vectors of pairs of strings and integers. I know that the return value sounds crazy, but what we are returning is a vector of possible semesters which are given by a vector of pairs which represent individual courses. In this function the input <em>n </em>represents the number of hypothetical semesters that the user would like to compute. We initialize an empty vector of vectors of pairs of strings and integers and then enter a pair of for-loops. The outer loop represents each semester and the inner loop represents individual courses in the semester. We simply add all of the user input to our vector of vectors of pairs of strings and integers. Finally we return this data structure and exit the function.
+
+In our <em>hypotheticalGPA </em>function we take a vector of vectors of pairs of strings and integers and return a vector of pairs of doubles and integers. The input data structure is simply the output of the <em>getHypotheticalSemesters</em> function. The return vector of pairs of doubles and integers represents semester GPAs and semester credit hours for each of the hypothetical semesters. We make these pairs by pushing the inner vectors of our input data structure to the <em>computeGPA </em>function which takes a vector of pairs of strings and integers. We initialize our vector of pairs of doubles and integers and push the results of the <em>computeGPA </em>function to our vector of doubles and integers.
+
+Our final function is the <em>main </em>function where we take the number of credit hours that have already been taken and the current GPA. We then call the <em>getHypotheticalSemesters </em>function with the number of hypothetical semesters that the user would like to input and then call the <em>hypotheticalGPA </em>function to compute the GPAs for all of the semesters. Finally we iterate through the vector of pairs of doubles and integers and compute the new cumulative GPAs and return them to the user.
+
+Thanks for reading and tell me what you think below!

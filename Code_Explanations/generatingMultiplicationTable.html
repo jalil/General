@@ -1,0 +1,80 @@
+<h2>Daily Program for 5/12/2013:</h2>
+Today we will be generating a nicely formatted multiplication table! If you remember your years in grade school memorizing these tables and remember hating memorizing multiplication operations, then I am sure that you will enjoy this pseudo-revenge on the system by writing a program that will generate arbitrarily large tables. The key goal of this program is not to learn how to do perform multiplication in C++, but to start thinking about white space formatting in command line programs!
+<h3>Problem Statement for Generating a Multiplication Table:</h3>
+Take an integral input from the user and return an arbitrarily large string representation of a multiplication table. In addition to printing the table itself, you should make sure that your output is nicely formatted so that the user can clearly see which row and column values yielded the given output.
+<h3>Code:</h3>
+[sourcecode language="cpp"]
+#include <iostream>
+#include <string>
+
+typename <template T>
+T numDigits(T num) {
+   int d = 0;
+   while (num) {
+      d /= 10;
+      ++d;
+   }
+   return d;
+}
+
+int digitDelta(int high, int curr) {
+   return numDigits(high) - numDigits(curr);
+}
+
+std::string makePadding(int n) {
+   int i = 0;
+   std::string s = "";
+   for (i = 0; i < n + 1; ++i) {
+      s += " ";
+   }
+   return s;
+}
+
+std::string printTable(int len) {
+   int i,j;
+   std::string mTable = "";
+   for (i = 1; i < len + 1; ++i) {
+      for (j = 1; j < len + 1; ++j) {
+         mTable += makePadding(digitDelta((len * len), i * j)) + std::to_string(i * j);
+      }
+      mTable += '\n';
+   }
+   return mTable;
+}
+
+int main(int argc, const char *argv[]) {
+   int n;
+   std::cout << "To what number of rows and columns would you like to create a multiplication table?\n  -->  ";
+   std::cin >> n;
+
+   std::cout << printTable(n) << std::endl;
+   return 0;
+}
+[/sourcecode]
+<h3>Sample Session:</h3>
+<pre>To what number of rows and columns would you like to create a multiplication table?
+  --&gt;  10
+   1   2   3   4   5   6   7   8   9  10
+   2   4   6   8  10  12  14  16  18  20
+   3   6   9  12  15  18  21  24  27  30
+   4   8  12  16  20  24  28  32  36  40
+   5  10  15  20  25  30  35  40  45  50
+   6  12  18  24  30  36  42  48  54  60
+   7  14  21  28  35  42  49  56  63  70
+   8  16  24  32  40  48  56  64  72  80
+   9  18  27  36  45  54  63  72  81  90
+  10  20  30  40  50  60  70  80  90 100</pre>
+<h3>Explanation:</h3>
+In our program to generate multiplication tables of length given by user input, we define five functions of which we have the <em>main</em> function, the <em>printTable</em> function, the <em>makePadding</em> function, the &lt; em&gt;digitDelta function, and the <em>numDigits</em> function. Our main function simply handles user input and outputs the multiplication table so we won't discuss it, but our other functions are quite interesting, so let's discuss them in turn.
+
+First, we have the <em>numDigits</em> function, which takes a generic numeric value as input and returns the number of digits in the number. We do this by dividing the input value by 10 until the value is zero, which works because integral numbers do not have a remainder. This means that if we input a value of <strong>5</strong> then we will divide it by <strong>10</strong> which would equal 0 as the decimal portion is droped. We should note that we should not pass a numeric value of type float to this function as it may not reach zero and will return an erroneous result.
+
+Second, we have the <em>digitDelta</em> function which takes two integer inputs which represent the highest value that will be found by our multiplication table and the current value. We then find the number of digits in both and return the difference. So, if we had input a 10 and a 5 then we would return 2 - 1 = 1.
+
+Now let's take a look at the <em>makePadding</em> function which takes an integer <em>n</em> as input which represents the number of spaces we would like to add. We simply initialize an empty string and iteratively add spaces to the empty string. Once the string has the number of spaces that we wanted, we return the string.
+
+Finally, we have our <em>printTable</em> function which takes an upper bound for the multiplications and returns a string representing a nicely formatted multiplication table. We initialize two integer loop variables and an empty return string which I named <em>mTable</em>. We then have a pair in which the inner loop adds the string representation of the result of multiplying the two loop variables which is preceded by some white space that we generate by using our padding function. We create our white space by finding the digit delta of the upper bound squared and the result given by multiplying the two loop variables. This means that all of the values in each printed row will have the same column width as the highest value in the table. This works well for smaller sized tables, but can become problematic if the upperbound of the multiplication table is extremely large.
+
+Despite the fact that generating the numbers themselves is trivial, I think that this program is a lot of fun to implement because of the need to implement formatting functions. Try to implement some changes to the whitespace formatting to have a non-constant column width!
+
+Until next time!

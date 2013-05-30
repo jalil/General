@@ -1,0 +1,295 @@
+<h2>Daily Program for 5/25/2013:</h2>
+Today we will be implementing the classic N Queens combinatorial search problem. We will try to ease into this one by simply searching for the distinct solutions instead of unique solutions. This just means that we will simply find all of the possible row-column pair patterns where each pair represents a queen on a chess board. Unique solutions would mean that checking for transposition which is a problem worth its own daily program. So, the goal of today's program stems from the mid-1800's when a pre-eminent mathematician posed the question of how many queens could you put on an 8x8 board chess board without any of queens attacking any other queen. We are going to skip the classic problem and head straight for the generalized version wherein we are searching on an arbitrarily large chess board of with NxN dimensions where N is some integer. If you're feeling a little hazy on chess and what the queen unit's attack patterns are, then I suggest that you head over to Wikipedia to read the <a href="http://en.wikipedia.org/wiki/Chess" target="_blank">introductory paragraph in the chess article</a> and then <a href="en.wikipedia.org/wiki/N_queens" target="_blank">the article on the N Queens problem</a>. If you really don't want to, then that's fine, but be aware that the problem might not be as cool if you don't know what it is doing!
+<h3>Problem Statement for the N-Queens Problem:</h3>
+Create a class called <em>Queens</em> which takes an integer as input which represents the dimensions of an NxN chessboard. Compute the number of positions of the maximum number of queens that could all inhabit the chessboard without any of the queens attacking any other queen (hint: the number of queens is N). Print out all of the distinct board states wherein all of the queens are passive and inform the user about the number of possible board states. As an added bonus try to make your class API as simple as possible.
+<h3>Code:</h3>
+[sourcecode language="cpp"]
+#include <iostream>
+#include <vector>
+#include <string>
+
+class Queens {
+  private:
+    //Internal Properties
+    int n;
+    std::vector<int> queenPositions;
+    std::vector<std::vector<int> > solutions;
+
+    //Internal Methods
+    std::string printBoard(std::vector<int>);
+
+    bool inDirection(int, int, int, int);
+    bool checkDiagonals(int);
+    bool checkCols(int);
+    bool checkPosValidity(int);
+    bool solve(int);
+
+    //Internal Accessors -- for encoding
+    int getQueen(int);
+    void setQueen(int, int);
+    void removeQueen(int);
+
+  Public:
+    //Constructors and Destructors
+    Queens(int);
+    ~Queens();
+
+    //External class API
+    void findSolutions(void);
+    int numSolutions(void);
+    std::string printSolutions(void);
+};
+
+Queens::Queens(int len) {
+  int i;
+
+  n = len;
+
+  for (i = 0; i < n; ++i) {
+    //Encoding for empty row is -1
+    queenPositions.push_back(-1);
+  }
+}
+
+Queens::~Queens() {}
+
+std::string Queens::printBoard(std::vector<int> aBoard) {
+  int i, j, q;
+
+  std::string board = "", dashPadding((4 * n) + 1, '-');
+  board += dashPadding + '\n';
+
+  for (i = 0; i < n; ++i) {
+    board += "|";
+    q = aBoard[i];
+    for (j = 0; j < n; ++j) {
+      if (q != j) {
+        board += "   |";
+      }
+      else {
+        board += " Q |";       }
+      }
+    board += '\n' + dashPadding + '\n';
+  }
+  return board;
+}
+
+int Queens::inDirection(int r, int c, int rD, int cD) {
+  int i;
+  for (i = 1; i < n; ++i) {
+    if ((r + (rD * i) >= n) || (r + (rD * i) < 0) || (c + (cD * i) >= n) || (c + (cD * i) < 0)) {
+      return false;
+    }
+    else {
+      if (getQueen(r + (rD * i)) != -1 && getQueen(r + (rD * i)) == c + (cD * i)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+bool Queens::checkDiagonals(int q) {
+  //q == index of queen and row of queen, queenPositions[q] == queen col
+  if (!(inDirection(q, getQueen(q), 1, 1))) {
+    if (!(inDirection(q, getQueen(q), -1, 1))) {
+      if (!(inDirection(q, getQueen(q), 1, -1))) {
+        if (!(inDirection(q, getQueen(q), -1, -1))) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
+bool Queens::checkCols(int q) {
+  int currQueenCol = getQueen(q), count = 0;
+  for (std::vector<int>::iterator it = queenPositions.begin(); it != queenPositions.end(); ++it) {
+    if (currQueenCol == *it) {
+      ++count;
+    }
+  }
+  return (count == 1);
+}
+
+bool Queens::checkPosValidity(int q) {
+  return (checkCols(q) && checkDiagonals(q));
+}
+
+bool Queens::solve(int q) {
+  int i;
+  for (i = 0; i < n; ++i) {
+    setQueen(q, i);
+    if (checkPosValidity(q)){
+      if (q == n - 1) {
+        solutions.push_back(queenPositions);
+        removeQueen(q);
+        return false;
+      }
+      else if (solve(q + 1)) {
+        return true;
+      }
+    }
+  }
+  removeQueen(q);
+  return false;
+}
+
+int Queens::getQueen(int idx) {
+  return queenPositions[idx];
+}
+
+void Queens::setQueen(int i, int v) {
+  queenPositions[i] = v;
+}
+
+void Queens::removeQueen(int q) {
+  queenPositions[q] = -1;
+}
+
+void Queens::findSolutions(void) {
+  solve(0);
+}
+
+int Queens::numSolutions(void) {
+  return solutions.size();
+}
+
+std::string Queens::printSolutions(void) {
+  std::string solutionString = "";
+  for (std::vector<std::vector<int> >::iterator it = solutions.begin(); it != solutions.end(); ++it) {
+    solutionString += printBoard(*it) + '\n';
+  }
+  return solutionString;
+}
+
+int main(int argc, const char *argv[]) {
+  int n;
+
+  std::cout << "What would you like the dimensions of you NxN chessboard to be?\n  N = ";
+  std::cin >> n;
+
+  Queens q(n);
+  q.findSolutions();
+  std::cout << q.printSolutions() << std::endl;
+  std::cout << "The total number of distinct solutions is " << q.numSolutions() << " with a " << n << "x" << n << " chessboard." << std::endl;
+
+  return 0;
+}
+[/sourcecode]
+<h3>Sample Session:</h3>
+<pre>What would you like the dimensions of your 
+NxN chessboard to be?
+  N = 6
+-------------------------
+|   | Q |   |   |   |   |
+-------------------------
+|   |   |   | Q |   |   |
+-------------------------
+|   |   |   |   |   | Q |
+-------------------------
+| Q |   |   |   |   |   |
+-------------------------
+|   |   | Q |   |   |   |
+-------------------------
+|   |   |   |   | Q |   |
+-------------------------
+
+-------------------------
+|   |   | Q |   |   |   |
+-------------------------
+|   |   |   |   |   | Q |
+-------------------------
+|   | Q |   |   |   |   |
+-------------------------
+|   |   |   |   | Q |   |
+-------------------------
+| Q |   |   |   |   |   |
+-------------------------
+|   |   |   | Q |   |   |
+-------------------------
+
+-------------------------
+|   |   |   | Q |   |   |
+-------------------------
+| Q |   |   |   |   |   |
+-------------------------
+|   |   |   |   | Q |   |
+-------------------------
+|   | Q |   |   |   |   |
+-------------------------
+|   |   |   |   |   | Q |
+-------------------------
+|   |   | Q |   |   |   |
+-------------------------
+
+-------------------------
+|   |   |   |   | Q |   |
+-------------------------
+|   |   | Q |   |   |   |
+-------------------------
+| Q |   |   |   |   |   |
+-------------------------
+|   |   |   |   |   | Q |
+-------------------------
+|   |   |   | Q |   |   |
+-------------------------
+|   | Q |   |   |   |   |
+-------------------------
+
+The total number of distinct solutions is 4 with a 6x6 grid.</pre>
+<h3>Explanation:</h3>
+Today's program might be a little confusing if you haven't read either of my previous posts which have used back tracking (see: <a title="C++ – Latin Square Solver" href="http://bradenlenz.com/2013/05/22/c-latin-square-solver/">the Latin Square solver</a> or <a title="C++ – NxN Latin Square Solver" href="http://bradenlenz.com/2013/05/23/c-nxn-sudoku-solver/">the NxN Latin Square Solver</a>) so try to read those if you have the chance. So, our <em>Queens</em> class is where the heart of our computation occurs so let's begin by taking a closer look at it's properties and methods!
+
+The <em>Queens </em>class has the private properties of:
+<ol>
+	<li><em>n </em>:= An integer representing the dimensions of the <em>n</em>x<em>n</em> chessboard.</li>
+	<li><em>queenPositions</em> := A vector of integers which represents a chessboard where the rows are equivalent to the index of any given element and the column is the element's value.</li>
+	<li><em>solutions </em>:= A vector of vectors of integers to represent the chessboard states where none of the N queens are able to attack any other queen.</li>
+</ol>
+The first property is pretty self-explanatory as it makes sense to have a property for the size of the chessboard on hand in our class implementation. The <em>queenPositions</em> vector may be a little confusing because of the encoding scheme I used, but it makes a lot of sense in this context. Since we know that queens can attack in diagonal moves, columnar moves, or moves along a row I decided that it didn't make sense to store a full matrix as we can only have one queen  per row anyways. We then can think about the index of a given element in the vector as the row index of a matrix and since we are storing the column the queen is in as the element's value we then have all of the information we need about the queen. You may have seen that in my code I pass around a lot of <em>q</em> integer parameters. This is a convenient side-effect of our encoding scheme as we can pass all of the information about any given queen with a single integer. Also, note that in the class constructor I encode rows without a queen as having a value of -1. Traditionally this would be a zero, but since zero is a valid index this was not possible. If you understand my rationale behind the <em>queenPositions</em> data structure, then I am sure that the <em>solutions</em> property will be no problem understanding. Recall that the <em>solutions</em> property is simply a vector of vectors of integers or simply a vector of <em>queenPositions</em>. Whenever we find a solution in the <em>solve</em> method it is pushed to the <em>solutions </em>property. Essentially, it just hold all of our chessboard states where none of the queens can attack any other queen.
+
+Alright! Now that we have taken a look at the <em>Queens</em> class properties, let's take a look at it's private methods. The goal was to provide an extremely simple class API for both the class user and the class implementer, so most of our methods are private.
+
+First, let's take a look at the private accessors that we specified for working with our encoded properties. We have the standard array of basic tools:
+<ol>
+	<li><em>getQueen</em> := Takes an integer as input which represents the index and row of a queen in the matrix and returns the column that the queen is residing in.</li>
+	<li><em>setQueen </em>:= Takes two integers as input representing a row-column pair and sets the <em>row</em>th element in the <em>queenPositions</em> vector to <em>column</em>. This simply adds a queen to a certain row in our encoded matrix.</li>
+	<li><em>removeQueen</em> := Takes an integer as input specifying a queen's row value and deletes it from our encoded matrix. This is simply accomplished by setting the <em>row</em>th element to -1 which we encoded to mean that the row is free of queens.</li>
+</ol>
+The accessors aren't too complex and aren't overly exciting so that's the last you'll hear me explain about them. If you're having trouble understanding the coding scheme I suggest you take a second look at the above source code as it may seem a little strange.
+
+We have the following methods which interface with actually solving the N-Queens problem:
+<ol>
+	<li><em>printBoard</em> := Takes a vector of integers as input and returns its std::string representation</li>
+	<li><em>inDirection</em> := Takes four integers as input and returns a boolean which provides for an optimized interface for  checking to see if diagonals in a matrix contain any other queens (without the matrix)</li>
+	<li><em>checkDiagonals</em> := Takes an integer as input and returns a boolean representing whether the queen given by the input integer falls on a cell where there is another queen who can attack diagonally.</li>
+	<li><em>checkCols</em> := Takes an integer as input and returns a boolean representing whether the queen given by the input integer is the only queen in the column specified by <em>queenPositions</em><em>[input integer].</em></li>
+	<li><em>checkPosValidity </em>:= Takes an integer as input and calls both <em>checkCols </em>and <em>checkDiagonals</em> and amalgamates and returns their results.</li>
+	<li><em>solve</em> := Takes an integer as input and returns a boolean and is the magical back tracking algorithm where we find all of the chessboard states where <em>n</em> queens are on the chessboard, but none of them can attack each other.</li>
+</ol>
+Since these methods form the heart of our program, let's take a closer look at each of them in turn.
+
+The <em>printBoard</em> method is the least exciting of these methods, but is essential as we must communicate the chessboard states which are solutions to the N-Queens problem to the user. This method isn't too different from any other grid-printing function where we simply initialize a string and concatenate all of the string representations of the rows and columns of our encoded matrix to it. Just note that we don't actually have to perform lookups for every cell since we know which column the queen will be in for every row and can just add empty cells to our return string until we reach the queen-occupied cell. We return our string and move on with our lives to bigger and better things!
+
+Our <em>inDirection</em> method seems pretty unapproachable but is actually quite simple. We take four integers as input which are <em>r</em>, <em>c</em>, <em>rD</em>, <em>cD</em>. Despite the UNIX style naming convention, there isn't anything special to these values as they just mean the row index, the column index, the row delta, and the column delta. The overall idea is that we are taking a starting location given by (<em>r</em>,<em>c</em>) and stepping through the encoded matrix is intervals given by (<em>rD</em>, <em>cD</em>). The values for the deltas are in the set {(1,1),(1,-1),(-1,1),(-1,-1)} which simply means stepping in the lower-right direction, stepping in the lower-left direction, stepping in the upper-right direction, and stepping in the upper-left direction respectively. In order to move further away than one location we have to use a for loop which runs from 0 to <em>n</em> where the loop is terminated when another queen is encountered and a value of <strong>true</strong> is returned or a boundary is reached and a value of <em></em><strong>false</strong> is returned. The strangely similar math given by <strong>(r + (rD * i)) </strong>just means that we are current <em>i</em> steps away from our starting row in the row-direction given by <em>rD</em>. This may seem strange, but I think it's a cool way of stepping through a matrix so take a second glance at the source code.
+
+The <em>checkDiagonals</em> method isn't anything too exciting as it takes an integer as input which is an index to the <em>queenPositions</em> property where we can get the row and column of a queen. In this method we just have four if-statements where we call <em>inDirection</em> with each of the different diagonal directions. This method is more to provide a simple API for finding out if there are any other queens lying on the same diagonal as the queen given my the input integer. If there is a queen then we return <strong>false</strong> and if there are no queens on the same diagonal then we return <em></em><strong>true</strong>.
+
+The <em>checkCols</em> method is the compliment to the <em>checkDiagonals </em>method as it just iterated through all of the values in the <em>queenPositions</em> property and records how many times the column value given by the integer input is found. If it is found only once then we return <strong>true</strong> signifying that our queen is the only one in its column and if it isn't then we return <strong>false</strong>. This method should be more or less self-explanatory to you.
+
+The <em>checkPosValidity </em>takes an integer as input and calls both <em>checkDiagonals </em>and <em>checkCols</em> and returns the logical AND on their respective outputs. This method is simply an API for all of our cell checking methods and should also be pretty self-explanatory.
+
+Ah, the <em>solve </em>method. This is where the magic happens (i.e. where we do our combinatorial search). The <em>solve</em> method is a recursive back tracking algorithm where we take an integer as input which gives us our current row and we return a boolean representing whether or not we were successful in our bid to find a combination of queen positions where none of the queens were able to attack any other queens. We do this by entering a for-loop which iterates from the 0-th column to the n-1th column. In each column we place our queen and see if that position is a legal placement by calling the <em>checkPosValidity </em>method with our current position in the encoded matrix. If our position is legal then we move on to the next position by calling the <em>solve</em> method with the argument given by our current argument plus one. If we are at the end of the chessboard then we push our <em>queenPositions</em> vector to the <em>solutions</em> vector of vectors and return false. This serves to continue to the combinatorial search for other solutions while still persisting our successful board state. We run until we discover all of the board states which is given by the initial <em>solve</em> instance's for-loop going to <em>n</em>. This method is pretty confusing so be sure to think about the sub-instances and take a second and third look at the source code (if you have to).
+
+For our public <em>Queens </em>class API we have only a few simple methods which are:
+<ol>
+	<li>The class constructor and destructor</li>
+	<li><em>findSolutions </em>:= Takes no inputs and calls the <em></em>internal <em>solve</em> method with the initial value of 0 which starts our combinatorial search.</li>
+	<li><em>numSolutions</em> := Takes no inputs and returns an integer which is simply the size of our <em>solutions</em> property which gives us the number of distinct solutions to a chessboard with our given dimensions.</li>
+	<li><em>printSolutions</em> := Takes no inputs and returns the string representations of all of the chessboard states where we have <em>n</em> queens on our <em>n</em>x<em>n</em> matrix. This is implemented by calling the <em>printBoard</em> internal method on all of the vectors in the <em>solutions</em> property.</li>
+</ol>
+Overall, our API was pretty simple so I am pleased that the hypothetical users of our class will not be confused.
+
+Thanks for reading and tell me what you think in the comments below! Have a great day and keep on programming!

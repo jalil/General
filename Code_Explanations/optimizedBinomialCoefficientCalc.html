@@ -1,0 +1,69 @@
+<h2>Daily Program for 5/16/2013</h2>
+Hello again, fellow programmer! Today we will revisit the dreaded binomial coefficient with an optimized binomial coefficient calculator. Previously, I implemented a naive code translation of the mathematical factorial formula of the binomial coefficient (found <a title="C++ – Binomial Coefficient Calculator" href="http://bradenlenz.com/2013/03/16/c-binomial-coefficient-calculator/">here</a>). Which is built off of the following definition:
+
+<a href="http://bradenlenz.files.wordpress.com/2013/05/a12375b9f5661262cf951dc829a33262.png"><img class="aligncenter size-full wp-image-1066" alt="" src="http://bradenlenz.files.wordpress.com/2013/05/a12375b9f5661262cf951dc829a33262.png" width="300" height="48" /></a>
+If you actually compile and try to run my previous program you may see that if you input a value over 20 to the <em>n</em> or <em>k</em> terms then you may get a result that is obviously incorrect. This is because the factorial terms grow far too fast and become massive numbers which are too large to be accurately stored in even the <strong>unsigned long int</strong> data type. Today we will be optimizing our previous solution to bypass actually computing most of the factorials which will extend the range of inputs which yield a valid output.
+<h3>Problem Statement for Optimizing Binomial Coefficients:</h3>
+Take an two integers from the user for the <em>n</em> and <em>k</em> terms of the binomial coefficient. Compute the binomial coefficient by canceling out the largest terms in the numerator and denominator and then compute the factorials. Return the binomial coefficient to the user.
+<h3>Code:</h3>
+[sourcecode language="cpp"]
+#include <iostream>
+
+using namespace std;
+
+unsigned long int factorial(unsigned long int n) {
+   if (n == 0) {
+      return 1;
+   }
+   else {
+      return n * factorial(n - 1);
+   }
+}
+
+unsigned long int binomialCoefficient(unsigned long int n, unsigned lont int k) {
+   int i, numerator = 1, denom = 1;
+   if ((n - k) >= k) {
+      for (i = n; i > (n - k); --i) {
+         numerator *= i;
+      }
+      denom = factorial(k);
+   }
+   else {
+      for (i = n; i > k; --i) {
+         numerator *= i;
+      }
+      denom = factorial(n - k);
+   }
+   return numerator / denom;
+}
+
+int main(int argc, const char *argv[]) {
+   unsigned long int n, k, o;
+   cout << "Please give me the n value: ";
+   cin >> n;
+
+   cout << "Please give me the k value: ";
+   cin >> k;
+
+   o = binomialCoefficient(n, k);
+   cout << "The binomial coefficient of " << n << " choose " << k << " is " << o << endl;
+   return 0;
+}
+[/sourcecode]
+<h3>Sample Session:</h3>
+<pre><strong>Unoptimized Calculator:</strong>
+Please give me the n value: 20
+Please give me the k value: 9
+The binomial coefficient of 20 choose 9 is 0
+<strong>Optimized Calculator:</strong>
+Please give me the n value: 20
+Please give me the k value: 9
+The binomial coefficient of 20 choose 9 is 2259</pre>
+<h3>Explanation:</h3>
+Take a look at the above formula and make sure that you understand it. You don't have to understand the proof of why it works, just try to run a few small pairs of <em>n </em>and <em>k </em>values through it. Once you have done that you should realize that you have <strong>n * (n - 1) * (n - 2) * ... * 1</strong> in the numerator and <strong>k * (k - 1) * (k - 2) * ... * 1 * (n - k) * (n - k - 1) * ... * 1</strong> in the denominator. Since <em>k </em>is less than <em>n</em>, this implies that we can cancel out at least the elements given by <em>k! </em> from the numerator and denominator. Since we have the (<em>n - k</em>) is less than <em>n</em>, we can also cancel out at least the elements given by  (<em>n - k</em>)<em></em>!  from the numerator and the denominator. In other words, if we had an input of <em>n </em>= 5 and <em>k </em><em>= 2 </em>then we would have that the formula is <strong>(5 * 4 * 3 * 2 * 1) / ((2 * 1)(3 * 2 * 1))</strong>. Since we want to cancel out the maximum number of elements that we can, we will choose to eliminate the <strong>(3 * 2 * 1) </strong><strong></strong>from both the numerator and the denominator which gives us the reduced formula of <strong>(5 * 4) / (2 *</strong> <strong>1)</strong>, which is much simpler.
+
+Using the above idea with our <em>binomialCoefficient </em>function, we determine whether <em>n - k </em>or <em>k</em> is larger and then proceed as if the terms were canceled. In order to compute the numerator we use a for-loop which begins from the value of <em>n</em> and ends at either <em></em>(<em>n -</em> <em>k</em>) or <em>k </em>depending on which is a larger value. This serves to ensure that we cancel out the largest value possible before computing a factorial, which is where we get massive numbers. After this, we compute the denominator by simply calling the <em>factoriail </em>function<em> </em>with the lesser value of the pair ((<em>n - k</em>), <em>k</em>).  Finally, we return the result of numerator divided by the denominator.
+
+That's all for today folks. I hope you enjoyed thinking about optimizing mathematical functions. I understand that you probably won't be computing a lot of binomial coefficients, but it still is an interesting application of traditional math to programming, which there really isn't enough of!
+
+Until next time!

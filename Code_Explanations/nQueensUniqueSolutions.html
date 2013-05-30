@@ -1,0 +1,449 @@
+<h2>Daily Program for 5/27/2013:</h2>
+Today we will be continuing our implementation of the classic N Queens combinatorial search problem with a unique solutions filtration extension. <a title="C++ – N-Queens Problem (Distinct Solutions)" href="http://bradenlenz.com/2013/05/25/c-n-queens-problem-distinct-solutions/">Last time we simply searched for the distinct solutions</a> instead of unique solutions and now it's time to play with the big kids and find all of the unique solutions. This means that we will now not only find all of the possible row-column pair patterns where each pair represents a queen on a chess board,  but search through all of these matrices to find out if any of our solutions are re-orientations of our other solutions. This means that we will be finding the solutions for which the positions on the chessboard are totally unique from all of the other solutions. If you haven't already read my <a title="C++ – N-Queens Problem (Distinct Solutions)" href="http://bradenlenz.com/2013/05/25/c-n-queens-problem-distinct-solutions/">previous post about the N-Queens problem</a>, then I highly suggest that you do so in order to understand the core elements of our combinatorial search. Additionally, if you're feeling a little hazy on chess and what the queen unit's attack patterns are, then I suggest that you head over to Wikipedia to read the <a href="http://en.wikipedia.org/wiki/Chess" target="_blank">introductory paragraph in the chess article</a> and then <a href="en.wikipedia.org/wiki/N_queens" target="_blank">the article on the N Queens problem</a>. In order to implement my filtration algorithm for discarding distinct solutions, you should probably read my posts on <a title="C++ – Matrix Rotation Algorithm" href="http://bradenlenz.com/2013/05/24/c-rotating-a-matrix/">matrix rotation</a> and <a title="C++ – Mirror Matrix Algorithm" href="http://bradenlenz.com/2013/05/26/c-mirror-matrix-algorithm/">mirror matrices</a> before preceding.
+<h3>Problem Statement for the N-Queens Problem:</h3>
+Create a class called <em>Queens</em> which takes an integer as input which represents the dimensions of an NxN chessboard. Compute the number of positions of the maximum number of queens that could all inhabit the chessboard without any of the queens attacking any other queen (hint: the number of queens is N). Print out all of the distinct board states wherein all of the queens are passive and inform the user about the number of possible board states. As an added bonus try to make your class API as simple as possible. After doing all of this, create a methodology for filtering out all of the distinct solutions such that only the unique solutions remain when you return the outputs to the user. This should be organized into a separate class.
+<h3>Code:</h3>
+[sourcecode language="cpp"]
+#include <iostream>
+#include <vector>
+#include <string>
+
+class SolutionFilter {
+  private:
+    //Filter properties
+    int n;
+    std::vector<std::vector<int> > encodedSolutions;
+    std::vector<std::vector<std::vector<int> > > decodedSolutions;
+
+    //Filtration private utility methods
+    bool isIn(int, std::vector<int>);
+    std::string printMat(std::vector<std::vector<int> >);
+
+    //Unique board state methods
+    void rotate90(std::vector<std::vector<int> >&);
+    std::vector<std::vector<int> > rotate(int, std::vector<std::vector<int> >);
+    std::vector<std::vector<int> > mirror(std::vector<std::vector<int> >);
+    bool isUnique(std::vector<std::vector<int> >, std::vector<std::vector<int> >);
+
+    //Differential encoding translation methods
+    void encodeSolutions(void);
+    std::vector<std::vector<std::vector<int> > > decodeSolutions(std::vector<std::vector<int> >);
+
+  public:
+    //Class constructor and destructor
+    SolutionFilter(std::vector<std::vector<int> >);
+    ~SolutionFilter();
+    std::vector<std::vector<int> > getUniques(void);
+};
+
+SolutionFilter::SolutionFilter(std::vector<std::vector<int> > v) {
+  if(!v.empty()) {
+    n = v[0].size();
+  }
+  else {
+    n = 0;
+  }
+  encodedSolutions = v;
+  decodedSolutions = decodeSolutions(encodedSolutions);
+}
+
+SolutionFilter::~SolutionFiler() {}
+
+bool SolutionFilter::isIn(int val, std::vector<int> v) {
+  for (std::vector<int>::iterator it = v.begin(); it != v.end(); ++it) {
+    if (val == *it) {
+      return true;
+    }
+  }
+  return false;
+}
+
+std::string SolutionFilter::printMat(std::vector<std::vector<int> > v) {
+  std::string s = "";
+  for (std::vector<std::vector<int> >::iterator i = v.begin(); i != v.end(); ++i) {
+    s += "<";
+    for (std::vector<int>::iterator j = (*i).begin(); j != (*i).end(); ++j) {
+      s += std::to_string(*j) + ", ";
+    }
+    s = s.substr(0, s.length() - 2) + "> \n";
+  }
+  return s;
+}
+
+void SolutionFilter::rotate90(std::vector<std::vector<int> >& matrix) {
+  int i,j;
+  std::vector<std::vector<int> > rotatedMatrix;
+
+  for (i = 0; i < n; ++i) {
+    std::vector<int> rotatedRow;
+    for (j = 0; j < n; ++j) {
+      rotatedRow.push_back(matrix[n - j - 1][i];
+    }
+    rotatedMatrix.push_back(rotatedRow);
+  }
+  matrix = rotatedMatrix;
+}
+
+std::vector<std::vector<int> > SolutionFilter::rotate(int rotations, std::vector<std::vector<int> > v) {
+  int i;
+
+  for (i = 0; i < rotations; ++i) {
+    rotate90(v);
+  }
+
+  return v;
+}
+
+std::vector<std::vector<int> > SolutionFilter::mirror(std::vector<std::vector<int> > matrix) {
+  std::vector<std::vector<int> > mirror;
+  for (std::vector<std::vector<int> >::iterator it = matrix.begin(); it != matrix.end(); ++it) {
+    std::vector<int> mirrorRow;
+    for (std::vector<int>::reverse_iterator rit = (*it).rbegin(); rit != (*it).rend(); ++rit) {
+      mirrorRow.push_back(*rit);
+    }
+    mirror.push_back(mirrorRow);
+  }
+  return mirror;
+}
+
+bool SolutionFilter::isUnique(std::vector<std::vector<int> > v1, std::vector<std::vector<int> > v2) {
+  int i,j;
+  for (i = 0; i < 2; ++i) {
+    for (j = 0; j < 4; ++j) {
+      v2 = rotate(1, v2);
+      if (v1 == v2) {
+        return false;
+      }
+    }
+    v2 = mirror(v2);
+  }
+  return true;
+}
+
+void SolutionFilter::encodeSolutions(void) {
+  encodedSolutions.clear();
+  for (std::vector<std::vector<std::vector<int> > >::iterator i = decodedSolutions.begin(); i != decodedSolutions.end(); ++i) {
+    std::vector<int> encMatrix;
+    for (std::vector<std::vector<int> >::iterator j = (*i).begin(); j != (*i).end(); ++j) {
+      for (std::vector<int>::iterator k = (*j).begin(); k != (*j).end(); ++k) {
+        if (*k != 0) {
+          encMatrix.push_back(k - (*j).begin());
+        }
+      }
+    }
+    encodedSolutions.push_back(encMatrix);
+  }
+}
+
+std::vector<std::vector<std::vector<int> > > SolutionFilter::decodeSolutions(std::vector<std::vector<int> > v) {
+  int i, j;
+  std::vector<std::vector<std::vector<int> > > decodedV;
+  for (std::vector<std::vector<int> >::iterator it = v.begin(); it != v.end(); ++it) {
+    std::vector<std::vector<int> > matrix;
+    for (i = 0; i < n; ++i) {
+      std::vector<int> row;
+      for (j = 0; j < n; ++j) {
+        row.push_back(0);
+      }
+      matrix.push_back(row);
+    }
+    for (std::vector<int>::iterator innerIt = (*it).begin(); innerIt != (*it).end(); ++innerIt) {
+      matrix[innerIt - (*it).begin()][*innerIt] = 1;
+    }
+    decodedV.push_back(matrix);
+  }
+  return decodedV;
+}
+
+std::vector<std::vector<int> > SolutionFilter::getUniques(void) {
+  std::vector<int> duplicates;
+  std::vector<std::vector<std::vector<int> > > uniques;
+
+  for (std::vector<std::vector<std::vector<int> > >::iterator i = decodedSolutions.begin(); i != decodedSolutions.end(); ++i) {
+    for (std::vector<std::vector<std::vector<int> > >::iterator j = i + 1; j != decodedSolutions.end(); ++j) {
+      if (!(isIn(i - decodedSolutions.end(), duplicates)) && (!(isUnique(*i, *j)))) {
+        duplicates.push_back(j - decodedSolutions.begin());
+      }
+    }
+  }
+  for (std::vector<std::vector<std::vector<int> > >::iterator i = decodedSolutions.begin(); i != decodedSolutions.end(); ++i) {
+    if (!isIn(i - decodedSolutions.begin(), duplicates)) {
+      uniques.push_back(*i);
+    }
+  }
+  decodedSolutions = uniques;
+  encodeSolutions();
+  return encodedSolutions;
+}
+
+class Queens {
+  private:
+    //Internal Properties
+    int n;
+    std::vector<int> queenPositions;
+    std::vector<std::vector<int> > solutions;
+
+    //Internal Methods
+    std::string printBoard(std::vector<int>);
+
+    bool inDirection(int, int, int, int);
+    bool checkDiagonals(int);
+    bool checkCols(int);
+    bool checkPosValidity(int);
+    bool solve(int);
+
+    //Internal Accessors -- for encoding
+    int getQueen(int);
+    void setQueen(int, int);
+    void removeQueen(int);
+
+  Public:
+    //Constructors and Destructors
+    Queens(int);
+    ~Queens();
+
+    //External class API
+    void findSolutions(void);
+    int numSolutions(void);
+    std::string printSolutions(void);
+};
+
+Queens::Queens(int len) {
+  int i;
+
+  n = len;
+
+  for (i = 0; i < n; ++i) {
+    //Encoding for empty row is -1
+    queenPositions.push_back(-1);
+  }
+}
+
+Queens::~Queens() {}
+
+std::string Queens::printBoard(std::vector<int> aBoard) {
+  int i, j, q;
+
+  std::string board = "", dashPadding((4 * n) + 1, '-');
+  board += dashPadding + '\n';
+
+  for (i = 0; i < n; ++i) {
+    board += "|";
+    q = aBoard[i];
+    for (j = 0; j < n; ++j) {
+      if (q != j) {
+        board += "   |";
+      }
+      else {
+        board += " Q |";       }
+      }
+    board += '\n' + dashPadding + '\n';
+  }
+  return board;
+}
+
+int Queens::inDirection(int r, int c, int rD, int cD) {
+  int i;
+  for (i = 1; i < n; ++i) {
+    if ((r + (rD * i) >= n) || (r + (rD * i) < 0) || (c + (cD * i) >= n) || (c + (cD * i) < 0)) {
+      return false;
+    }
+    else {
+      if (getQueen(r + (rD * i)) != -1 && getQueen(r + (rD * i)) == c + (cD * i)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+bool Queens::checkDiagonals(int q) {
+  //q == index of queen and row of queen, queenPositions[q] == queen col
+  if (!(inDirection(q, getQueen(q), 1, 1))) {
+    if (!(inDirection(q, getQueen(q), -1, 1))) {
+      if (!(inDirection(q, getQueen(q), 1, -1))) {
+        if (!(inDirection(q, getQueen(q), -1, -1))) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
+bool Queens::checkCols(int q) {
+  int currQueenCol = getQueen(q), count = 0;
+  for (std::vector<int>::iterator it = queenPositions.begin(); it != queenPositions.end(); ++it) {
+    if (currQueenCol == *it) {
+      ++count;
+    }
+  }
+  return (count == 1);
+}
+
+bool Queens::checkPosValidity(int q) {
+  return (checkCols(q) && checkDiagonals(q));
+}
+
+bool Queens::solve(int q) {
+  int i;
+  for (i = 0; i < n; ++i) {
+    setQueen(q, i);
+    if (checkPosValidity(q)){
+      if (q == n - 1) {
+        solutions.push_back(queenPositions);
+        removeQueen(q);
+        return false;
+      }
+      else if (solve(q + 1)) {
+        return true;
+      }
+    }
+  }
+  removeQueen(q);
+  return false;
+}
+
+int Queens::getQueen(int idx) {
+  return queenPositions[idx];
+}
+
+void Queens::setQueen(int i, int v) {
+  queenPositions[i] = v;
+}
+
+void Queens::removeQueen(int q) {
+  queenPositions[q] = -1;
+}
+
+void Queens::findSolutions(void) {
+  solve(0);
+  SolutionFilter theFilter(solutions);
+  solutions = theFilter.getUniques();
+}
+
+int Queens::numSolutions(void) {
+  return solutions.size();
+}
+
+std::string Queens::printSolutions(void) {
+  std::string solutionString = "";
+  for (std::vector<std::vector<int> >::iterator it = solutions.begin(); it != solutions.end(); ++it) {
+    solutionString += printBoard(*it) + '\n';
+  }
+  return solutionString;
+}
+
+int main(int argc, const char *argv[]) {
+  int n;
+
+  std::cout << "What would you like the dimensions of you NxN chessboard to be?\n  N = ";
+  std::cin >> n;
+
+  Queens q(n);
+  q.findSolutions();
+  std::cout << q.printSolutions() << std::endl;
+  std::cout << "The total number of distinct solutions is " << q.numSolutions() << " with a " << n << "x" << n << " chessboard." << std::endl;
+
+  return 0;
+}
+[/sourcecode]
+<h3>Sample Session:</h3>
+<pre>How many rows?
+  --&gt;  7
+-----------------------------  -----------------------------
+| Q |   |   |   |   |   |   |  | Q |   |   |   |   |   |   |
+-----------------------------  -----------------------------
+|   |   | Q |   |   |   |   |  |   |   |   | Q |   |   |   |
+-----------------------------   -----------------------------
+|   |   |   |   | Q |   |   |   |   |   |   |   |   |   | Q |
+-----------------------------   -----------------------------
+|   |   |   |   |   |   | Q |   |   |   | Q |   |   |   |   |
+-----------------------------   -----------------------------
+|   | Q |   |   |   |   |   |   |   |   |   |   |   | Q |   |
+-----------------------------   -----------------------------
+|   |   |   | Q |   |   |   |   |   | Q |   |   |   |   |   |
+-----------------------------   -----------------------------
+|   |   |   |   |   | Q |   |   |   |   |   |   | Q |   |   |
+-----------------------------   -----------------------------
+
+-----------------------------   -----------------------------
+|   | Q |   |   |   |   |   |   |   | Q |   |   |   |   |   |
+-----------------------------   -----------------------------
+|   |   |   | Q |   |   |   |   |   |   |   |   | Q |   |   |
+-----------------------------   -----------------------------
+| Q |   |   |   |   |   |   |   | Q |   |   |   |   |   |   |
+-----------------------------   -----------------------------
+|   |   |   |   |   |   | Q |   |   |   |   | Q |   |   |   |
+-----------------------------   -----------------------------
+|   |   |   |   | Q |   |   |   |   |   |   |   |   |   | Q |
+-----------------------------   -----------------------------
+|   |   | Q |   |   |   |   |   |   |   | Q |   |   |   |   |
+-----------------------------   -----------------------------
+|   |   |   |   |   | Q |   |   |   |   |   |   |   | Q |   |
+-----------------------------   -----------------------------
+-----------------------------   -----------------------------
+|   | Q |   |   |   |   |   |   |   | Q |   |   |   |   |   |
+-----------------------------   -----------------------------
+|   |   |   |   | Q |   |   |   |   |   |   |   |   | Q |   |
+-----------------------------   -----------------------------
+|   |   |   |   |   |   | Q |   |   |   | Q |   |   |   |   |
+-----------------------------   -----------------------------
+|   |   |   | Q |   |   |   |   |   |   |   |   |   |   | Q |
+-----------------------------   -----------------------------
+| Q |   |   |   |   |   |   |   |   |   |   | Q |   |   |   |
+-----------------------------   -----------------------------
+|   |   | Q |   |   |   |   |   | Q |   |   |   |   |   |   |
+-----------------------------   -----------------------------
+|   |   |   |   |   | Q |   |   |   |   |   |   | Q |   |   |
+-----------------------------   -----------------------------On a 7x7 chessboard, there are 6 totally unique board states.</pre>
+<h3>Explanation:</h3>
+Today we will just focus on the added <em>SolutionFilter</em> class so I would highly suggest that you visit my previous <a title="C++ – N-Queens Problem (Distinct Solutions)" href="http://bradenlenz.com/2013/05/25/c-n-queens-problem-distinct-solutions/">post the <em>Queens</em> class</a> before proceeding. In addition to this, it may also be beneficial if you read my posts on <a title="C++ – Matrix Rotation Algorithm" href="http://bradenlenz.com/2013/05/24/c-rotating-a-matrix/">matrix rotation</a> and <a title="C++ – Mirror Matrix Algorithm" href="http://bradenlenz.com/2013/05/26/c-mirror-matrix-algorithm/">mirror matrices</a> as these are used in our program to determine distinct matrices and eliminate them from our vector of matrices. If you've already read these posts then you should be all ready to continue on and understand some of my design decisions about how I implemented the filter which eliminates all of the distinct chessboard states and maintains our list of unique chessboard states where none of the queens can attack any of the other queens.
+
+The <em>SolutionFilter </em>class has the private properties of:
+<ol>
+	<li><em>n </em>:= An integer representing the dimensions of the <em>n</em>x<em>n</em> chessboard.</li>
+	<li><em>encodedSolutions</em> := A vector of vectors of integers which represents all of the encoded chessboard states where none of the queens can attack any of the other queens. Recall from last time that the inner vectors of integers are encoded such that the index of any given element is a queen's row index and the element's value itself is the column value.</li>
+	<li><em>decodedSolutions </em>:= A vector of vectors of vectors of integers to represent the actual chessboard states where none of the N queens are able to attack any other queen. The main difference between this property and the <em>encodedSolutions</em> property is that the <em>decodedSolutions</em> property's inner two vectors form a regular matrix instead of an encoded matrix. Just as a point of reference, but I will use the matrix for a vector of vectors of integers from this point forward.</li>
+</ol>
+Now that we have taken a look at the <em>SolutionFilter</em> class properties, let's take a look at it's private methods. One of the major goals of this class was to provide an extremely simple class API so that all of it's work is done with a single public method. Since we are working with traditional matrices in this class, we will not need to specify any special accessors to work with the solution state data.
+
+First, let's ease into the private methods by taking a look at the two utility methods I defined.
+<ol>
+	<li><em>isIn</em> := Takes an integer and a vector of integers as input and returns a boolean representing whether or not the integer exists in the vector. Later on we will build a vector of indexes to our <em>decoded</em><em>Solutions</em> vector of matrices which specifies which ones are distinct and which are unique and we will use the <em>is</em><em>In</em> method to determine if we should add an element to a vector of unique matrices.</li>
+	<li><em>printMat </em>:= Takes a matrix as input and returns its std::string representation which can be printed to the terminal. I used this method extensively during debugging, but serves no real purpose in our final product. I left the method in my final implementation since I may need to return to this class and don't want to be left without a debugging capability!</li>
+</ol>
+The utility methods aren't too complex and aren't overly exciting so that's the last you'll hear me explain about them. These are run of the mill methods and can be easily deciphered from the source code, but if you're confused be sure to comment and ask me more about their operations.
+
+The next group of methods I would like to discuss are the unique board state methods which are used to determine whether the solution matrices are distinct or unique.
+<ol>
+	<li><em>rotate90</em> := Takes a vector of vectors of  integers as input by reference and rotates the matrix by 90 degrees clock-wise.</li>
+	<li><em>rotate</em> := Takes an integer and a vector of vectors of integers (a matrix) as input and returns a matrix representing the input matrix rotated input integer times.  This method is really just a nice API for the <em>rotate90</em> method.</li>
+	<li><em>mirror</em> := Takes a matrix (a vector of vectors of integers) as input and returns the mirror image matrix of the input matrix.</li>
+	<li><em>isUnique</em> := Takes two matrices as input and returns a boolean which tells us if the two are unique relative to one another.<em></em></li>
+</ol>
+These methods are an integral part of our program, so let's take a closer look at each of them in turn.
+
+The <em>rotate90</em> method is more or less an exact copy of the <em>rotate90</em> method that we specified a few days ago. We simply copy the reverse orderings of each of the columns and turn them into rows to rotate the matrix by 90 degrees (or pi/2 radians for you math-folk). Our <em>rotate</em> method is simply an API for the <em>rotate90</em> method and just adds a for-loop into the mix which allows the method user to rotate the matrix by 90-degrees as many times as they would like all at once. <strong></strong>For more information regarding the operation of this method, please read my post on <em></em><a title="C++ – Matrix Rotation Algorithm" href="http://bradenlenz.com/2013/05/24/c-rotating-a-matrix/">matrix rotation</a>.<strong></strong>
+
+The <em>mirror</em> method takes a matrix as input and returns another matrix that is a mirror image of the input matrix. This is accomplished by iterating through all of the rows in the matrix and adding of all their respective elements to another matrix in reverse order. It is important to note that only the row elements are copied in reverse order as copying the entire matrix in reverse order will simply give a 180 degree rotated matrix. For more information regarding mirror matrices, read yesterday's post on <a title="C++ – Mirror Matrix Algorithm" href="http://bradenlenz.com/2013/05/26/c-mirror-matrix-algorithm/">mirror matrices</a>.<em></em>
+
+The <em>isUnique</em> method takes two matrices as input and returns a boolean representing whether or not these two matrices are unique relative to one another. This is also just an exact copy of the uniqueness method from <a title="C++ – Mirror Matrix Algorithm" href="http://bradenlenz.com/2013/05/26/c-mirror-matrix-algorithm/">yesterday's mirror matrices post</a> as we simply rotate the second matrix four times and test for equality after each rotation. After this, we then set the second matrix equal to its mirror matrix and then rotate it four times again and once again check for equality at each point. If an equality is found then the method is exited by returning a value of <strong>false</strong>. Only if all the possibilites are tried and no equality is found do we return <strong>true</strong> signifying that the two matrices are unique relative to one another.
+
+Since we are working with encoded matrix data in our <em>Queens</em> class we needed encoding and decoding methods which are given by:
+<ol>
+	<li><em>encodeSolutions </em>:= Takes no inputs and returns nothing but does update the <em>encodedSolutions</em> property which holds our <em>Queens </em>class compatible solution matrix data.</li>
+	<li><em>decodeSolutions </em>:= Takes a vector of vectors of integers as input (i.e. <em>Queens </em>class compatible solution matrix data) and returns a vector of regular matrices that we will manipulate (i.e. a vector of vectors of vectors of integers).</li>
+</ol>
+The <em>encodeSolutions </em>method and the <em>decodeSolutions</em> method work largely the same way and simply generate compatible data structures for the different classes. In order to encode our data we simply generate a vector of vectors of integers where the inner vectors hold column queen values. This is accomplished by iterating through all of the rows in the solution matrices and pushing a columnar value every time we come across a queen. In order to decode the <em>queens</em> class compatible matrices we just initialize our vector of matrices to be full of empty positions and then add queen values where the queens should be. Overall, these methods look very complicated because of all the for-loops, but are actually quite simple as they just add or subtract a vector from our encoding for the chessboard solution states. If these are giving you trouble then I urge you to re-implement them or just to take a second glance at the source code and try to trace the execution of the program.
+
+For our public <em>SolutionFilter </em>class API we have only a few  methods which are:
+<ol>
+	<li>The class constructor and destructor</li>
+	<li><em>getUniques </em>:= Takes no inputs and returns the <em>Queens</em> class encoded solutions that are unique.</li>
+</ol>
+The class constructor is nothing special and just takes the vector of <em>Queens</em> class encoded matrix data and sets it to the <em>encodedSolutions</em> property, sets the <em>n</em> property to the dimensions of the chessboards, and calls the <em>decodeSolutions</em> method on the <em>encodedSolutions</em> property and sets it equal to the <em>decodedSol</em><em>utions</em> property (sorry about the variable names there). Our destructor doesn't really do anything as we haven't allocated any space on the heap for our data, but we include it anyway as it is good form!
+
+The <em>getUniques</em> method makes the best use of our class and binds all of our other methods together. In this method we iterate through all of the possible pairs of matrices in our <em>decodedSolutions </em> property and check to see if each pair is unique. If the pair is not unique then the matrix pointed to by the inner for-loop is added to our <em>duplicates</em> vector which holds integer indexes to the matrices which we are not distinct. Once we have iterated through all of the possible pairs of matrices in the <em>decodedSolutions</em> property, we iterate through <em>decodedSolutions</em> again and add all of the matrices that are not contained in the <em>duplicates</em> vector to our <em>uniques</em> vector. We then assign <em>uniques </em>to the <em>decodedSolutions</em> property and then encode our unique board states by calling the <em>encodeSolutions</em> method and return the <em>encodedSolutions</em> property.
+
+Thanks for reading and tell me what you think in the comments below! I hope you had a great memorial day and keep on programming!

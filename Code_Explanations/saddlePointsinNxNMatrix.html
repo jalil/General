@@ -1,0 +1,181 @@
+<h2>Daily Program for 5/18/2013:</h2>
+Today we will be embarking into the world of intermediate difficulty programming interview problems with the classic saddle points in an NxN matrix problem. If you never took Calculus III then you may not know what a saddle point is. Essentially, a saddle point is a critical point in a function where the value at the given point is the lowest in its row and the highest in its column. So, it just means that a saddle point is a point where it is the max of its column and the min of its row. Saddle points are normally found in three-dimensional functions, but we will simplify this to a two-dimensional NxN matrix. I had a lot of fun writing this, so I hope that you will enjoy it!
+<h3>Problem Statement:</h3>
+Take a matrix of integers as input from the user and find all of the saddle points in it. Return the positions and values of each of these saddle points. You should use a class to represent the saddle points and use a vector of vectors as your matrix.
+<h3>Code:</h3>
+[sourcecode language="cpp"]
+#include <iostream>
+#include <vector>
+#include <string>
+
+class SaddlePoint {
+   public:
+      std::string print();
+      void setVals(int, int, int);
+   private:
+      int r, c, val;
+};
+
+void SaddlePoint::setVals(int row, int col, int num) {
+   r = row;
+   c = col;
+   val = num;
+}
+
+std::string SaddlePoint::print() {
+   return "A saddle point occurs at (" + std::to_string(r) + ", " + std::to_string(c) + ") with a value of " + std::to_string(val);
+}
+
+template <typename T>
+std::vector<T> maxCols(std::vector<std::vector<T> > v) {
+   int i,j;
+   T m;
+   std::vector<T> maxCol;
+
+   for (j = 0; j < v.size(); ++j) {
+      m = -999999;
+      for (i = 0; i < v.size(); ++i) {
+         if (v[i][j] > m) {
+            m = v[i][j];
+         }
+      }
+      maxCol.push_back(m);
+   }
+   return maxCol;
+}
+
+template <typename T>
+int min(std::vector<T> v) {
+   int m = 999999;
+   for (typename std::vector<T>::iterator it = v.begin(); it != v.end(); ++it) {
+      if (*it < m) {
+         m = *it;
+      }
+   }
+   return m;
+}
+
+template <typename T>
+std::vector<T> minRows(std::vector<std::vector<T> > v) {
+   std::vector<T> minRows;
+   for (typename std::vector<std::vector<T> >::iterator it = v.begin(); it != v.end(); ++it) {
+      minRow.push_back(min(*it));
+   }
+   return minRow;
+}
+
+template <typename T>
+std::string printVector<std::vector<T> v) {
+   std::string s = "<";
+   for (typename std::vector<T>::iterator it = v.begin(); it != v.end(); ++it) {
+      s += std::to_string(*it) + ", ";
+   }
+   return s.substr(0, s.length() - 2) + '>';
+}
+
+template <typename T>
+std::vector<SaddlePoint> saddlePoints(std::vector<std::vector<T> > v) {
+   int i,j;
+
+   std::vector<T> colMaxs, rowMins;
+   std::vector<SaddlePoint> saddlePoints;
+
+   colMaxs = maxCols(v);
+   rowMins = minRows(v);
+
+   for (i = 0; i < v.size(); ++i) {
+      for (j = 0; j < v.size(); ++j) {
+         if (v[i][j] == colMaxs[j] && v[i][j] == rowMins[i]) {
+            SaddlePoint s;
+            s.setVals(i, j, v[i][j]);
+            saddlePoints.push_back(s);
+         }
+      }
+   }
+   return saddlePoints;
+}
+
+int main(int argc, const char *argv[]) {
+   int i,j,k,r;
+   std::vector<SaddlePoint> sPoints;
+   std::vector<std::vector<int> > v;
+
+   std::cout << "How many elements do you want to add to each row of the matrix?\n  -->  ";
+   std::cin >> r;
+
+   std::cout << "\nINITIALIZE THE MATRIX:" << std::endl;
+   for (i = 0; i < r; ++i) {
+      std::vector<int> row;
+      for (j = 0; j < r; ++j) {
+         std::cout << "Row: " << i + 1 << " Col: " << j + 1 << "\nWhat is the value: ";
+         std::cin >> r;
+      }
+      v.push_back(row);
+   }
+
+   sPoints = saddlePoints(v);
+
+   std::cout << "\nYOUR MATRIX IS:" << std::endl;
+   for (std::vector<std::vector<int> >::iterator it = v.begin(); it != v.end(); ++it) {
+      std::cout << printVector(*it) << std::endl;
+   }
+
+   std::cout << "\nSADDLE POINTS:" << std::endl;
+   if (sPoints.size() != 0) {
+      for (std::vector<SaddlePoint>::iterator it = sPoints.begin(); it != sPoints.end(); ++it) {
+         std::cout << (*it).print() << std::endl;
+      }
+   }
+   else {
+      std::cout << "No saddle points occur in this matrix" << std::endl;
+   }
+   return 0;
+}
+[/sourcecode]
+<h3>Sample Session:</h3>
+<pre>How many elements do you want to add to each row of the matrix?
+  --&gt;  3
+
+INITIALIZE THE MATRIX:
+Row: 1 Col: 1
+What is the value: 20
+Row: 1 Col: 2
+What is the value: 30
+Row: 1 Col: 3
+What is the value: 40
+Row: 2 Col: 1
+What is the value: 56
+Row: 2 Col: 2
+What is the value: 78
+Row: 2 Col: 3
+What is the value: 45
+Row: 3 Col: 1
+What is the value: 1
+Row: 3 Col: 2
+What is the value: 2
+Row: 3 Col: 3
+What is the value: 3
+
+YOUR MATRIX IS: 
+&lt;20, 30, 40&gt;
+&lt;56, 78, 45&gt;
+&lt; 1,  2,  3&gt;
+
+SADDLE POINTS:
+A saddle point occurs at (1, 2) with a value of 45</pre>
+<h3>Explanation:</h3>
+Our solution to finding the saddle points of an NxN matrix consists of a class and several functions, so let's take a closer look at each of these elements. I will note that I am far too lazy to discuss the <em>main</em> function as it simply initializes our matrix and performs I/O operations, so we will not be taking a look at that.
+
+The first thing we do is initialize our <em>SaddlePoint</em> class which will hold the row and column positions of a saddle point as well as the value of the saddle point itself. For this class we define the function <em>setVals</em> and <em>print</em> which assign the properties of the class and print out the properties respectively. We could have used a struct to represent the saddle points, but this is C++ and who uses structs when you don't absolutely have to?
+
+We then defined a <em>maxCols</em> function which took a vector of vectors of some generic numeric value. In this function we define two local loop variables (<em>i </em>and <em>j</em>) as well as a numeric value of type <em>T</em> which is the same as our input type. We then enter our pair of for-loops where the outer loop iterates through the columns and the inner loop iterates through the rows. This works to the effect that we find the max of a column before moving on to the next column. We push each of the column maxes to a vector and return that vector once it is full. Essentially, this means that we are returning a vector where the index of any given element is the column number and the value is the max of that column.
+
+In order to find the row minimums we decompose the problem into two functions where the first function is the <em>min</em> function which takes a vector of generic numeric inputs and returns the maximum value in that vector. This is accomplished by simply comparing each element in the vector to a local variable that we have initialized to Inf or other very large number. By the time we have iterated through all of the elements we will have found the max and can then return it.
+
+We then define a <em>minRows</em> function which takes a vector of vectors of generic numeric inputs as an argument. We initialize a local vector which will hold all of our row maximum values. We then loop through all of the inner vectors and call the <em>min</em> function on each one and store the results in our local vector. Finally, we return the local vector which holds all of our row minimums. This just means that for any given element in the local vector, its index is the row number and its value is the minimum value in that row.
+
+We also define a utility function called <em>printVector</em> which simply takes a vector of generic numeric inputs as an argument and produces a formatted string representation of it. This is accomplished by initializing an std::string to a left angle bracket and then iteratively concatenating string representations of the elements. Finally we cut off the extraneous space and comma and add a right angle bracket and return the string.
+
+Finally we define a function called <em>saddlePoints</em> which takes a vector of vectors of generic numeric inputs and returns a vector of SaddlePoint objects which represent all of the saddle points found in the matrix. Given all of the other functions that we have defined, this function becomes quite simple as we simply need to call <em>maxCols </em>and <em>minRows</em> to get the respective vector of column maximums and vector of row minimums. We then iterate through each of the points in the matrix and check to see if the value equals the column max for its column and if it equals the row minimum for that column. If the point matches both of those conditions then we initialize a new SaddlePoint object and set its values to the current position being checked in the matrix and add it to our vector of saddle points found so far. Once we have completely iterated through the matrix we can return our vector of saddle points and we are done.
+
+I hope that you enjoyed reading and thinking about this program! I certainly enjoyed writing it. Tell me what you think in the comments below!

@@ -1,0 +1,265 @@
+<h2>Daily Program for 5/28/2013:</h2>
+Today we will be revisiting the <a title="C++ – Fraction Class" href="http://bradenlenz.com/2013/04/27/c-fraction-class/">fraction class</a> that we implemented a month ago. Instead of simply endowing our class with basic computational methods and a little operator overloading, I decided to expand the class to include comparative operator overloading which opens up the option to use compare and sort Fraction objects like they are any other standard numeric object. For the purposes of continuity I used the <a title="C++ – Gnome Sort" href="http://bradenlenz.com/2013/04/25/c-gnome-sort/">gnome sort algorithm </a>that we implemented about a month ago as well. I chose gnome sort because of its awesome name and because it is a pretty fun simple sorting algorithm. Today's lesson is that making our classes as versatile as possible is essential for allowing your fellow programmers to take full advantage of the new objects!
+<h3>Problem Statement for Sorting Fractions:</h3>
+Expand the <em>Fraction</em> class that we implemented <a title="C++ – Fraction Class" href="http://bradenlenz.com/2013/04/27/c-fraction-class/">here</a> to include operator overloading for the <em></em>greater than, less than, and equality operators. In addition to defining these new methods, define a function to construct a std::string representation of a vector of <em>Fraction</em> objects and create a version of the <a title="C++ – Gnome Sort" href="http://bradenlenz.com/2013/04/25/c-gnome-sort/">gnome sort</a> to sort <em>Fraction</em> objects in a vector (by reference).
+<h3>Code:</h3>
+[sourcecode language="cpp"]
+#include <iostream>
+#include <string>
+#include <vector>
+
+class Fraction {
+  private:
+    //private properties
+    int numerator, denominator;
+    //private utils
+    int GCD(int, int);
+    void reduce(void);
+    void negateQuot(void);
+
+  public:
+    //accessor methods
+    void setNumerator(int);
+    void setDenominator(int);
+    int getNumerator(void);
+    int getDenominator(void);
+    //constructors
+    Fraction();
+    Fraction(int,int);
+    //Destructor
+    ~Fraction();
+    //operator overloading
+    bool operator== (Fraction);
+    bool operator> (Fraction);
+    bool operator< (Fraction);
+    Fraction operator+ (Fraction);
+    Fraction operator- (Fraction);
+    Fraction operator* (Fraction);
+    Fraction operator/ (Fraction);
+    //util methods
+    std::string print(void);
+};
+
+Fraction::Fraction() {
+  numerator = 1;
+  denominator = 1;
+}
+
+Fraction::Fraction(int a, int b) {
+  numerator = a;
+  denominator = b;
+  reduce();
+  negateQuot();
+}
+
+Fraction::~Fraction() {}
+
+void Fraction::GCD(int a, int b) {
+  if (a == 0 || b == 0) {
+    return 0;
+  }
+
+  int a1,b1,c = 0;
+  if (a > b) {
+    a1 = a;
+    b1 = b;
+  }
+  else {
+    a1 = b;
+    b1 = a;
+  }
+
+  while (b1 != 0) {
+    c = a1 % b1;
+    a1 = b1;
+    b1 = c;
+  }
+  return a1;
+}
+
+void Fraction::reduce(void) {
+  int gcd;
+  if (numerator == 0 || denominator == 0) {
+    numerator = 0;
+    denominator = 0;
+  }
+  else {
+    gcd = GCD(numerator, denominator);
+    setNumerator(numerator / gcd);
+    setDenominator(denominator / gcd);
+  }
+}
+
+void Fraction::negateQuot(void) {
+  if ((numerator < 0 && denominator < 0) || (numerator >= 0 && denominator < 0)) {
+    numerator = -numerator;
+    denominator = -denominator;
+  }
+}
+
+bool Fraction::operator==(Fraction b) {
+  return (numerator == b.getNumerator()) && (denominator == b.getDenominator());
+}
+
+bool Fraction::operator>(Fraction b) {
+  float f1,f2;
+  if (denominator != 0) {
+    f1 = numerator / (float) denominator;
+  }
+  else {
+    f1 = 0.0;
+  }
+
+  if (b.getDenominator != 0) {
+    f2 = b.getNumerator() / (float) b.getDenominator();
+  }
+  else {
+    f2 = 0.0;
+  }
+  return (f1 > f2);
+}
+
+bool Fraction::operator<(Fraction b) {
+  float f1, f2;
+  if (denominator != 0) {
+    f1 = numerator / (float) denominator;
+  }
+  else {
+    f1 = 0.0;
+  }
+
+  if (b.getDenominator() != 0) {
+    f2 = b.getNumerator / (float) b.getDenominator();
+  }
+  else {
+    f2 = 0.0;
+  }
+
+  return (f1 < f2);
+}
+
+Fraction Fraction::operator* (Fraction b) {
+  return Fraction((numerator * b.getNumerator()), (denominator * b.getDenominator()));
+}
+
+Fraction Fraction::operator/ (Fraction b) {
+  return Fraction((numerator * b.getDenominator()), (denominator * b.getNumerator()));
+}
+
+Fraction Fraction::operator+ (Fraction b) {
+  if (numerator == 0 || b.getNumerator() == 0) {
+    if (numerator != 0) {
+      return Fraction(numerator, denominator);
+    }
+    else {
+      return Fraction(b.getNumerator(), b.getDenominator());
+    }
+  }
+  else {
+    return Fraction((numerator * b.getDenominator()) + (denominator * b.getNumerator()), denominator * b.getDenominator());
+  }
+}
+
+Fraction Fraction::operator-(Fraction b) {
+  if (numerator == 0 || b.getNumerator() == 0) {
+    if (numerator != 0) {
+      return Fraction(numerator, denominator);
+    }
+    else {
+      return Fraction(-b.getNumerator(), b.getDenominator());
+    }
+  }
+  else {
+    return Fraction((numerator * b.getDenominator()) - (denominator * b.getNumerator()), (denominator * b.getDenominator());
+  }
+}
+
+std::string Fraction::print(void) {
+  return std::to_string(numerator) + "/" + std::to_string(denominator);
+}
+
+std::string printVectorFraction(std::vector<Fraction> vF) {
+  std::string s = "<";
+  for (std::vector<Fraction>::iterator it = vF.begin(); it != vF.end(); ++it) {
+    s += (*it).print() + ", ";
+  }
+  return s.substr(0, s.length() - 2) + ">";
+}
+
+void gnomeSort(std::vector<Fraction>& vF)[
+  std::vector<Fraction>::iterator it = vF.begin();
+  while (it + 1 != vF.end()) {
+    if  (*it > *(it + 1)) {
+      std::iter_swap(it, it + 1);
+      if (it != vF.begin()) {
+        --it;
+      }
+    }
+    else {
+      ++it;
+    }
+  }
+}
+
+int main(int argc, const char *argv[]) {
+  int a,b,n,i;
+  std::vector<Fraction> fractionVector;
+
+  std::cout << "How many fractions would you like to create?\n  -->  ";
+  std::cin >> n;
+
+  for (i = 0; i < n; ++i) {
+    std::cout << "\nFraction " << i + 1 << ":" << std::endl;
+    std::cout << "Give me the numerator: ";
+    std::cin >> a;
+    std::cout << "Give me the denominator:  ";
+    std::cin >> b;
+    fractionVector.push_back(Fraction(a,b));
+  }
+
+  std::cout << "Your fraction vector is " << printVectorFraction(fractionVector) << std::endl;
+
+  gnomeSort(fractionVector);
+
+  std::cout << "Your sorted fraction vector is " << printVectorFraction(fractionVector) << std::endl;
+
+  return 0;
+}
+
+[/sourcecode]
+<h3>Sample Session:</h3>
+<pre>How many fractions would you like to create?
+  --&gt;  3
+
+Fraction 1:
+Give me a numerator: 4
+Give me a denominator: 5
+
+Fraction 2:
+Give me a numerator: -1
+Give me a denominator: 2
+
+Fraction 3:
+Give me a numerator: 5
+Give me a denominator: 8Your fraction vector is &lt;4/5, -1/2, 5/8&gt;
+Your sorted fraction vector is &lt;-1/2, 5/8, 4/5&gt;</pre>
+<h3>Explanation:</h3>
+Our new and improved <em>Fraction</em> class contains many of the methods that we implemented last time, so I will not go over those again, but you can find an explanation <a title="C++ – Fraction Class" href="http://bradenlenz.com/2013/04/27/c-fraction-class/">here</a>. Instead, we will focus on our added methods and functions.
+
+We added the following methods to our <em>Fraction</em> class:
+<ol>
+	<li><em>operator== </em>:= Takes another instance of the <em>Fraction</em> class as input and returns a boolean representing whether or not the two fractions are the same.</li>
+	<li><em>operator&gt;</em> := Takes another instance of the <em>Fraction</em> class as input and returns a boolean representing whether or not our current fraction is greater than the input fraction.</li>
+	<li><em>operator&lt;</em> := Takes another instance of the <em>Fraction</em> class as input and returns a boolean representing whether or not our current fraction is less than the input fraction.</li>
+</ol>
+We did not implement methods for greater than or equal to and less than or equal to since these can easily be derived from the above comparison operators. In other words, we would simply create an expression like <strong>(</strong><strong>(</strong><strong>frac1 &gt; frac</strong><strong>2) || (frac1 == frac2)) </strong>instead of including the operator overload in our class definition. If you are actively following along then implementing these operators in our <em>Fraction</em> class might be a good exercise!
+
+The <em>operator==</em> method is pretty simple and it just returns the logical AND operation on a comparison of the numerators of the two objects and the denominators of the two objects. This works since we always reduce a fraction by using the <em>reduce</em> method when we instantiate a <em>Fraction</em> object so we do not have to worry about differential numerators and denominators for the same values.
+
+The <em>operator&gt;</em> and <em>operator&lt;</em> methods are very similar for the majority of both methods so we can safely lump them together. In both of these methods, we have to test for a 0 denominator in both our current <em>Fraction</em> and the input <em>Fraction</em> since we do not want to accidentally divide by zero.  If a <em>Fraction</em> does not have a zero as its denominator then we simply do floating point division on the <em>Fraction</em>'s numerator and denominator. We do this for both <em>Fractions</em> and then compare the two floats at the end. The logical comparison between the two floats is the only difference between these two methods.
+
+In addition to these added operator overloading methods, we also define two new functions which are <em>printFractionVector </em>and <em>gnomeSort</em>. You can read all about the <em>gnomeSort</em> function <a title="C++ – Gnome Sort" href="http://bradenlenz.com/2013/04/25/c-gnome-sort/">here</a> as I implemented it as a separate daily program some time ago. The <em>printVectorFraction</em> function is pretty easy to understand as we just iterate through all of the values in the std::vector by using an iterator and calling the <em>print</em> method on each of the fractions in the vector. Since the <em>print</em> method returns an std::string representation of the fraction, all we have to do is concatenate all of these string representations together and comma delimit them and capping the front and back of the vector with angle brackets.  We then return the std::string and are done! Not too bad, right?
+
+The <em>main</em> function is changed a little bit and now provides a much nicer interface for inputting several <em>Fraction</em> objects. We simply take an arbitrary number of <em>Fraction</em> objects from the user and put them in a std::vector. We print the vector to show the user the order that they are currently in and then sort the vector by using the <em>gnomeSort</em> function that we defined. After sorting we show the user the vector again and are done!
+
+I think today was a lot of fun for me as I got to take some older code and extend it. The reality of being a programmer in the object-oriented landscape is that we have to be thinking about how we can make the most robust classes as possible that have nice interfaces and make all of our lives easier and I think this class certainly fits the bill! Thanks for reading and tell me what you think in the comments below!

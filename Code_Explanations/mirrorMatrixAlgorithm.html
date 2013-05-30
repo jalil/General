@@ -1,0 +1,218 @@
+<h2>Daily Program for 5/26/2013:</h2>
+Today we will be implementing some more methods for our <em>Matrix</em> class from <a title="C++ – Matrix Rotation Algorithm" href="http://bradenlenz.com/2013/05/24/c-rotating-a-matrix/">last time</a> which will be used to determine if two matrices are distinct or unique. We will define distinct matrices as matrices in which the points in both matrices are the same in some orientation where one of the matrices is rotated or mirrored. This may sound strange, so an example of distinct matrices would be:
+<pre>Matrix 1        Matrix 2
+[ [1,0]         [ [0,1]
+  [0,1] ]         [1,0] ]</pre>
+These two matrices are distinct as the second matrix is simply a <a class="zem_slink" title="Mirror image" href="http://en.wikipedia.org/wiki/Mirror_image" target="_blank" rel="wikipedia">mirror image</a> of the first matrix. Additionally,there can be added complexity insofar as having a matrix that is a rotated mirror of the other as in:
+<pre>Matrix 1        Matrix 2
+[ [1,0,0]       [ [0,0,0]
+  [0,1,0]         [0,1,0]
+  [1,0,0] ]       [1,0,1] ]</pre>
+In this second example, the second matrix is a mirror image of the first, but also has been rotated by one 90-degree turn. This is a trivial example as it is only a three by three matrix, but for the larger matrices it is much less trivial to be checking for mirrored status. Additionally, we define unique matrices to be those in which there does exist an orientation for which the matrices are the same.
+<h3>Problem Statement for the Mirror Matrix Algorithm:</h3>
+Determine an algorithm that can be used to find the mirror image of a matrix and use this algorithm alongside your matrix rotation algorithm to define a <em>isUnique</em> Matrix class method to take a second matrix as input and determine if these two matrices are unique or are distinct. All of this should be included in your <em>Matrix</em> class from <a title="C++ – Matrix Rotation Algorithm" href="http://bradenlenz.com/2013/05/24/c-rotating-a-matrix/">last time</a>.
+<h3>Code:</h3>
+[sourcecode language="cpp"]
+#include <iostream>
+#include <vector>
+#include <string>
+
+class Matrix {
+  private:
+    int n;
+    std::vector<std::vector<int> > matrix;
+    void rotate90(void);
+  public:
+    Matrix(std::vector<std::vector<int> >);
+    ~Matrix();
+    std::vector<std::vector<int> > getVectors(void);
+    bool operator==(Matrix);
+    std::string printMatrix(void);
+    void mirror(void);
+    bool isUnique(Matrix);
+    void rotate(int);
+};
+
+Matrix::Matrix(std::vector<std::vector<int> > v) {
+  matrix = v;
+  n = matrix.size();
+}
+
+Matrix::~Matrix() {}
+
+std::vector<std::vector<int> > Matrix::getVectors(void) {
+  return matrix;
+}
+
+bool Matrix::operator==(Matrix otherMatrix) {
+  return (matrix == otherMatrix.getVectors());
+}
+
+std::string Matrix::printMatrix(void) {
+  std::string mat = "";
+  for (std::vector<std::vector<int> >::iterator it = matrix.begin(); it != matrix.end(); ++it) {
+    mat +="<";
+    for (std::vector<int>::iterator vit = (*it).begin(); vit != (*vit).end(); ++vit) {
+      mat += std::to_string(*vit) + ", ";
+    }
+    mat = mat.substr(0, mat.length() - 2) + "> \n";
+  }
+  return mat;
+}
+
+void Matrix::mirror(void) {
+  std::vector<std::vector<int> > mirrorV;
+  for (std::vector<std::vector<int> >::iterator it = matrix.begin(); it != matrix.end(); ++it) {
+    std::vector<int> mirrorRow;
+    for (std::vector<int>::reverse_iterator rit = (*it).rbegin(); rit != (*it).rend(); ++rit) {
+      mirrorRow.push_back(*rit);
+    }
+    mirrorV.push_back(mirrorRow);
+  }
+  matrix = mirrorV;
+}
+
+void Matrix::rotate90(void) {
+  int i,j;
+  std::vector<std::vector<int> > rotV;
+
+  for (i = 0; i < n; ++i) {
+    std::vector<int> rowRot;
+    for (j = 0; j < n; ++j) {
+      rowRot.push_back(matrix[n - j - 1][i];
+    }
+    rotV.push_back(rowRot);
+  }
+  matrix = rotV;
+}
+
+void Matrix::rotate(int r) {
+  int i, numRotations = r % 4;
+
+  if (numRotations < 0) {
+    numRotations = 4 + numRotations;
+  }
+
+  for (i = 0; i < numRotations; ++i) {
+    rotate90();
+  }
+}
+
+bool Matrix::isUnique(Matrix otherMatrix) {
+  int i,j;
+  if (matrix == otherMatrix.getVectors()) {
+    return false;
+  }
+
+  for (i = 0; i < 2; ++i) {
+    for (j = 0; j < 4; ++j) {
+      otherMatrix.rotate(1);
+      if (matrix == otherMatrix.getVectors()) {
+        return false;
+      }
+    }
+    otherMatrix.mirror();
+  }
+
+  return true;
+}
+
+std::vector<std::vector<int> > initMatrix(void) {
+  int i,j,k,n;
+  std::vector<std::vector<int> > matrix;
+
+  std::cout << "What will the dimensions of your NxN matrix be?\n  N = ";
+  std::cin >> n;
+
+  for (i = 0; i < n; ++i) {
+    std::vector<int> row;
+    for (j = 0; j < n; ++j) {
+      std::cout << "\nELEMENT IN ROW " << i << " AND COL " << j << ":" << std::endl;
+      std::cout << "What is the value at this coordinate?\n  -->  ";
+      std::cin >> k;
+
+      row.push_back(k);
+    }
+    matrix.push_back(row);
+  }
+  return matrix;
+}
+
+int main(int argc, const char *argv[]) {
+  bool areUnique;
+  int i,j, rotations;
+  std::vector<std::vector<int> > v1, v2;
+
+  for (i = 0; i < 7; ++i) {
+    std::vector<int> innerV;
+    for (j = 0; j < 7; ++j) {
+      innerV.push_back(0);
+    }
+    v1.push_back(innerV);
+    v2.push_back(innerV);
+  }
+
+  //init v1 with constants
+  v1[0][1] = v1[1][3] = v1[2][0] = v1[3][6] = v1[4][4] = v1[5][2] = v1[6][5] = 1;
+
+  //init v2 with constants
+  v2[0][1] = v2[1][4] = v2[2][2] = v2[3][0] = v2[4][6] = v2[5][3] = v2[6][5] = 1
+
+  Matrix matrix1(v1), matrix2(v2);
+
+  std::cout << "\nYOUR INITIALIZED MATRICES ARE:\n" << "\nMATRIX ONE:\n" << matrix1.printMatrix() << "\nMATRIX TWO:\n" << matrix2.printMatrix() << std::endl;
+
+  areUnique = matrix1.isUnique(matrix2);
+  if (areUnique) {
+    std::cout << "\nMatrix 1 and Matrix 2 are unique matrices." << std::endl;
+  }
+  else {
+    std::cout << "\nMatrix 1 and Matrix 2 are distinct matrices." << std::endl;
+  }
+  return 0;
+}
+[/sourcecode]
+<h3>Sample Session:</h3>
+<pre>YOUR INITIALIZED MATRICES ARE:
+
+MATRIX ONE:
+&lt;0, 1, 0, 0, 0, 0, 0&gt; 
+&lt;0, 0, 0, 1, 0, 0, 0&gt; 
+&lt;1, 0, 0, 0, 0, 0, 0&gt; 
+&lt;0, 0, 0, 0, 0, 0, 1&gt; 
+&lt;0, 0, 0, 0, 1, 0, 0&gt; 
+&lt;0, 0, 1, 0, 0, 0, 0&gt; 
+&lt;0, 0, 0, 0, 0, 1, 0&gt; 
+
+MATRIX TWO:
+&lt;0, 1, 0, 0, 0, 0, 0&gt; 
+&lt;0, 0, 0, 0, 1, 0, 0&gt; 
+&lt;0, 0, 1, 0, 0, 0, 0&gt; 
+&lt;1, 0, 0, 0, 0, 0, 0&gt; 
+&lt;0, 0, 0, 0, 0, 0, 1&gt; 
+&lt;0, 0, 0, 1, 0, 0, 0&gt; 
+&lt;0, 0, 0, 0, 0, 1, 0&gt; 
+Matrix 1 and Matrix 2 are distinct matrices.</pre>
+<h3>Explanation:</h3>
+Today's program is a continuation of<a title="C++ – Matrix Rotation Algorithm" href="http://bradenlenz.com/2013/05/24/c-rotating-a-matrix/"> my matrix rotation class</a> so I highly suggest you read that article before continuing on with this one as I will not be explaining the core class functionalities that I discussed last time.
+
+In today's expansions to our <em>Matrix</em> class, we added the following methods:
+<ul>
+	<li>A operator overloading method for the == comparison operator</li>
+	<li>The <em>mirror</em> method</li>
+	<li>The <em>isUnique </em>method</li>
+	<li>The <em>getVectors</em> method</li>
+</ul>
+Let's take a closer look at each of these new methods and discuss what their respective roles in our overall solutions are!
+
+Our operator overloading method for the '==' comparison operator takes another instance of the<em> Matrix</em> class as input and returns a boolean. This method makes use of the <em>getVectors</em> method to compare the vector of vectors of integers that composes both of the matrices. This comparison is allows a user of our class to check if two instances of the <em>Matrix</em> class are exactly the same (i.e. all of the values are equal and in the same absolute positions in the matrices). We needed to add this method since we store the vector of vectors of integers internally as private properties and I wanted an easy way to compare matrices in my implementations.
+
+The <em>mirror</em> method takes no inputs and returns no values. It does change an instance of the <em>Matrix</em> class' internal <em>matrix</em> property (i.e. the vector of vectors of integers) and its mirror image. The key point here is that a matrix's mirror image is simply a reversal of all of its elements in the rows with the same row order as before. We accomplish this by initializing a second vector of vectors of integers and adding reversed rows to it. When we have added all of the reversed rows to our second vector of vectors of integers, we simply set the second equal to our <em>matrix</em> property and move on. You should note that you must initialize an std::vector of integers to represent a row and cannot just push back elements directly into the second vector of vectors.
+
+Our <em>isUnique</em> method takes another instance of the <em>Matrix</em> class and returns a boolean where an output of <strong>true</strong> means that the two matrices are unique and an output of <strong>false</strong> means that the two matrices are either equal or distinct. Recall that we defined distinct to mean that the two matrices have the same values at the same positions but have different orientations. This means that if we take two equal matrices and rotate one of them by 90 degrees then we still have two distinct matrices. In our method, the first thing we do is check to see if the two matrices are equal and return <strong>false</strong> if they are. If the two matrices are not equal then we enter a pair of for-loops where the outer for-loop is used to go through the inner for-loop twice. The first pass through the inner loop rotates the input matrix 4 times and checks if the two matrices are now equal with each rotation. After our first pass through the inner for-loop we call the <em>mirror</em> method on the input matrix which serves to now check all of the rotations of the mirror matrix. We then iterate through all of the rotations of the mirror matrix and return <strong>false</strong> if we find an orientation where the two matrices are equal. After the pair of for-loops we return<strong> true</strong> as there was no orientation where the two matrices were equal and can now be certifiably called unique matrices.<strong> </strong>
+
+The <em>getVectors </em>method is simply an accessor method which returns the internal representation of the instance of the <em>Matrix</em> class. We needed to implement this method so that we could compare two instances of the <em>Matrix</em> class since our <em>matrix</em> property is private.
+
+You may now be asking yourself, "Why care whether matrices are unique or distinct?". In most cases  I would have to agree with you that this seems pretty trivial, but these algorithms will be needed for tomorrows program when we implement a program to find the unique solutions to the class N Queens problem.
+
+Tell me what you think of today's program and keep on programming!

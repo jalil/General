@@ -1,0 +1,70 @@
+<h2>Daily Program for 5/13/2013:</h2>
+Today we will be working on implementing the classic "make change" program in C++. I have already implemented it here in Ruby, but today I think that it would be good to have a C++ version. Essentially, our goal is to take an integer representing an amount of currency in cents and return the least number of coins which represent the input number of cents. If you're just learning the C++ programming language, this should be  a very gentle introduction to the std::map container, so let's get going!
+<h3>Problem Statement for the Make Change Algorithm:</h3>
+Accept an integer as input to your make change function which will represent the amount of change to be given back to the customer. Create a red-black tree structure to contain the coin types and their relative counts which will give the least number of coins yielding the amount of change required.
+<h3>Code:</h3>
+[sourcecode language="cpp"]
+#include <iostream>
+#include <string>
+#include <vector>
+#include <map>
+
+std::map<std::string, int> makeChange(int c) {
+   std::map<std::string, int> mChange;
+   mChange["Quarters"] = 0;
+   mChange["Dimes"] = 0;
+   mChange["Nickels"] = 0;
+   mChange["Pennies"] = 0;
+
+   while (c != 0) {
+      if (c - 25 >= 0) {
+         c -= 25;
+         mChange["Quarters"] += 1;
+      }
+      else if (c - 10 >= 0) {
+         c -= 10;
+         mChange["Dimes"] += 1;
+      }
+      else if (c - 5 >= 0) {
+         c -= 5;
+         mChange["Nickels"] += 1;
+      }
+      else {
+         c -= 1;
+         mChange["Pennies"] += 1;
+      }
+   }
+   return mChange;
+}
+
+int main(int argc, const char *argv[]) {
+   int i;
+   std::map<std:string, int> changeMap;
+
+   std::cout << "How many cents would you like to convert to coins?\n  -->  ";
+   std::cin >> i;
+
+   changeMap =  makeChange(i);
+
+   std::cout << i << " cents becomes:" << std::endl;
+
+   for (std::map<std::string, int>::iterator it = changeMap.begin(); it != changeMap.end(); ++it) {
+      std::cout << it->second << " " << it->first << std::endl;
+   }
+   return 0;
+}
+[/sourcecode]
+<h3>Sample Session:</h3>
+<pre>How many cents would you like to convert to coins?
+  --&gt;  57
+57 cents becomes:
+2 Quarters
+0 Dimes
+1 Nickels
+2 Pennies</pre>
+<h3>Explanation:</h3>
+In order to compute the number and type of the different coins to get the least number of coins for any given amount of change we define a function, <em>makeChange</em>, to iteratively add values to a std::map. In our function, we take an integer input, <em>c</em>, and return a std::map composed of std::string-integer pairs. When we enter our function, we first an initialize our std::map by creating four pairs with one for each type of coin that we will be using. Additionally, we initialize these pairs with a value of zero. We then enter a while-loop where the loop invariant is that the input integer, <em>c</em>, does not equal zero. We then have a block of control flow statements. In our block, we start with the largest denomination coins so that they are subtracted from <em>c</em> first. This is because only one of the if-statements in a block can be executed. This means that the while-loop would subtract quarters from the change amount until the change remaining amount is greater than 25. Only when the change remaining amount is less than 25 will we even have a chance to check if the change remaining is greater than dimes, nickels, or pennies. In this way, we ensure ourselves that since the largest denomination is always being removed and that the change denomination system is based off of factors of five (except for the penny) that we will always reach the lowest possible number of coins for any input change amount.
+
+In our <em>main</em> function we simply ask the user for the amount of change that is required of us to make change for. We then read in the amount and then pass it to the <em>makeChange</em> function. We then use a for-loop with an iterator to iterate through all of the entries in the std::map. Finally, we return zero which exits our program and we are done!
+
+I hope you enjoyed this simple program. Was it too easy? Let me know in the comments below!

@@ -1,0 +1,93 @@
+<h2>Daily Program for 5/19/2013</h2>
+<img class="aligncenter" alt="" src="http://upload.wikimedia.org/wikipedia/commons/b/b9/Sieve_of_Eratosthenes_animation.gif" width="445" height="369" />
+
+Today we will be implementing the classic Sieve of Eratosthenes for finding prime numbers. You may recall that prime numbers are numbers which have factors of only themselves and one. More simply this means that no other numbers beside 1 and itself may be multiplied together to equal the number in question. For example, the only two integers which may be multiplied together to equal 11 are 1 and 11. The sieve of Eratosthenes works by eliminating all of the factors of each number we encounter that we have not eliminated before. For example, we start with two and eliminate all of the even numbers, but note that 2 is a prime number. We then proceed with 3 and eliminate all of the multiples of 3, but maintain that 3 is a prime.  We proceed in this fashion until we reach the number given by the square root of the upper bound of the range. The Sieve of Eratosthenes was developed by Ancient Greek mathematicians a couple thousand of years ago, so I am sure that with a little thought you will be able to understand in no time!
+<h3>Problem Statement for the Sieve of Eratosthenes:</h3>
+Take an integer from the user and determine the prime numbers between 2 and the upper bound by implementing the Sieve of Eratosthenes in a function. Return all of the prime numbers that you have found to the user.
+<h3>Code:</h3>
+[sourcecode language="cpp"]
+#include <iostream>
+#include <vector>
+
+double squareRoot(int num) {
+   int i;
+   double low = 1.0;
+   double high = (double) num;
+   if (num >= 1) {
+      for (i = 0; i < 30; ++i) {
+         double currEst = (high + low) / 2;
+         if (currEst * currEst > num) {
+           high = currEst;
+         }
+         else if (currEst * currEst == num) {
+            return currEst;
+         }
+         else {
+            low = currEst;
+         }
+      }
+      return currEst;
+   }
+   else {
+      return -1;
+   }
+}
+
+std::vector sieveOfEratosthenes(int n) {
+   int i,j;
+   std::vector primes;
+   std::vector valsToCheck(n, true);
+
+   for (i = 2; i < squareRoot(n); ++i) {
+      if (valsToCheck[i]) {
+         for (j = 2; i * j < n; ++j) {
+            valsToCheck[i * j] = false;
+         }
+      }
+   }
+
+   for (i = 2; i < n; ++i) {
+      if (valsToCheck[i]) {
+         primes.push_back(i);
+      }
+   }
+   return primes;
+}
+
+int main(int argc, const char *argv[]) {
+   int n;
+   std::cout << "What is the upper bound of the range for which you would like to find prime numbers?\n  -->  ";
+   std::cin >> n;
+
+   std::vector v = sieveOfEratosthenes(n);
+
+   std::cout << "The primes we have found between 2 and " << n << " are as follows:" << std::endl;
+
+   for (std::vector::iterator it = v.begin(); it != v.end(); ++it) {
+      std::cout << *it << std::endl;
+   }
+
+   return 0;
+}
+[/sourcecode]
+<h3>Sample Session:</h3>
+<pre>What is the upper bound of the range for which you would like to find prime numbers?
+  --&gt;  25
+The primes we have found between 2 and 25 are as follows:
+2
+3
+5
+7
+11
+13
+17
+19
+23</pre>
+<h3>Explanation:</h3>
+In order to find the prime numbers in the user defined range, we define two functions which are <em>squareRoot</em> and <em>sieveOfEratosthenes</em>. I opted to define my own square root function, but this was not absolutely necessary as you may have used the square root library function contained in the <em>cmath</em> header. Let's take a look at both of these functions a little closer.
+
+In the <em>squareRoot</em> function, we take an integer as input and return a double representing the square root of the input integer. We find the square root by first controlling for the size of the integer. Since we will not be dealing with imaginary numbers we set the minimum bound of our square root function at 1. If it is less than that then we simply return a -1. We then enter a for-loop where we iteratively estimate our way closer to the true value of the square root by using setting our high and low estimates depending on whether our current estimate squared is greater than or less than the true value of the input.
+
+In the <em>sieveOfEratosthenes</em> function, we take an integer for the upper bound of the range wherein we will search for primes and we return a vector of prime numbers that we have found in the range. In our function we define two integer variables and two vectors where one is of type boolean and the other is of type integer. We initialize our boolean vector to have a length equal to the input integer containing values of <strong>true</strong>. We then use a pair of for-loops to eliminate composite numbers from our range, which we define with our vector of booleans. The outer for-loop has a loop invariant where we iterate the integer <em>i</em> from 2 to the square root of the input integer and increment <em>i</em> by one. We then check to see if the value in the boolean vector at the index given by our outer loop variable and if it has a value of <strong>true </strong>then we proceed with our inner loop to eliminate all of its multiples. If it is already false then we know that it is a composite number and its multiples are going to already have been eliminated or will be eliminated as any multiple of a composite number is just another composite number with another component. Once we have completed iterating through all of the values in our range we enter another for-loop which adds all of the indexes where the value in the boolean vector is true to our integer vector. Finally, we return the vector of integers which represents all of the prime numbers between 2 and the upper bound of the range.
+
+That's all I have for today! I hope you enjoyed today's post, tell me what you think in the comments below!

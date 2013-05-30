@@ -1,0 +1,165 @@
+<h2>Daily Program for 5/14/2013:</h2>
+Welcome back to my daily programs! Today we will be implementing a version of the classic game of rock paper scissors. If you have somehow forgotten what the game of rock paper scissors is, then I will briefly describe it to you. Essentially, two player choose one of three states (i.e. rock, paper, or scissors) at the same time compare their states. Rock beats scissors, but is beaten by paper. Scissors beat paper, but are beaten by rock. Paper beats rock, but is beaten by scissors. We will be implementing this game and will do it without user defined classes to illustrate to you how powerful classes are in simple game programming!
+<h3>Problem Statement for the Rock Paper Scissors Game:</h3>
+Create a simple rock paper scissors game without the use of user defined classes where player one is a human and player 2 is a computer player. Take an integral input from the user to define how many rounds have to be won in order to declare victory and then end the game when a player has won that many times.
+<h3>Code:</h3>
+[sourcecode language="cpp"]
+#include <functional>
+#include <iostream>
+#include <string>
+#include <random>
+
+int absVal(int n) {
+   return (n >= 0) ? n : -n;
+}
+
+int humanMove() {
+   int move;
+   while (true) {
+      std::cout << "You have three move choices:\n1 --> Rock\n2 --> Paper\n3 --> Scissors\nWhich would you like?\n  -->  ";
+      std::cin >> move;
+      if (move > 0 && move < 4) {
+         return move;
+      }
+      else {
+         std::cout << "Your input was invalid. Remember to input a value between 1 and 3." << std::endl;
+      }
+   }
+}
+
+int evalMoves(int m1, int m2) {
+    int deltaM = absVal(m2 - m1);
+    if (deltaM == 2) {
+      if (m1 > m2) {
+         return 2;
+      }
+      else {
+         return 1;
+      }
+   }
+   else if (deltaM == 1) {
+      if (m1 > m2) {
+         return 1;
+      }
+      else {
+         return 2;
+      }
+   }
+   else {
+      return 0;
+   }
+}
+
+std::string moveToStr(int n) {
+   std::string s;
+   switch(n) {
+      case 1:
+         s = "Rock";
+         break;
+      case 2:
+         s = "Paper";
+         break;
+      case 3:
+         s = "Scissors";
+         break;
+   }
+   return s;
+}
+
+int playGame(int n) {
+   int r, p1, p2, mP1, mP2;
+
+   //init the random number generator
+   std::default_random_engine generator;
+   std::uniform_int_distribution<int> distribution(1,3);
+   auto robotGuess = std::bind(distribution, generator);
+
+   p1 = p2 = 0;
+
+   while (p1 < n && p2 < n) {
+      std::cout << "The current score is:\nHuman --> " << p1 << ", Computer --> " << p2 << sd::endl;
+      mP1 = humanMove();
+      mP2 = robotGuess();
+      r = evalMoves(mP1, mP2);
+      std::cout << "\nYou used '" << moveToStr(mP1) << "' and the computer chose '" << moveToStr(mP2) << "'" << std::endl;
+      if (r == 1) {
+         ++p1;
+         std::cout << "You won this round! Have a point!\n" << std::endl;
+      }
+      else if (r == 2) {
+         ++p2;
+         std::cout << "You lost this round. Computer gets a point.\n" << std::endl;
+      }
+      else {
+         std::cout << "The game was a draw! No one gets a point.\n" << std::endl;       }    }    return p1 > p2 ? 1 : 2;
+}
+
+int main(int argc, const char *argv[]) {
+   int p, n;
+   std::cout << "How many points are required for a win?\n  -->  ";
+   std::cin >> n;
+
+   p = playGame(n);
+   if (p == 1) {
+      std::cout << "The human wins!" << std::endl;
+   }
+   else {
+      std::cout << "Robots win again. Soon they will replace us..." << std::endl;
+   }
+   return 0;
+}
+[/sourcecode]
+<h3>Sample Session:</h3>
+<pre>How many points are required for a win?
+  --&gt;  1
+The current score is:
+Human --&gt; 0, Computer --&gt; 0
+You have three move choices:
+1 --&gt; Rock
+2 --&gt; Paper
+3 --&gt; Scissors
+Which would you like?
+  --&gt;  3
+
+You used 'Scissors' and the computer chose 'Rock'
+You lost this round. Computer gets a point.
+Robots win again. Soon they will replace us...</pre>
+<h3>Explanation:</h3>
+In order to create our game of rock paper scissors, we define several functions which include:
+<ul>
+	<li><em>absVal</em> --&gt; returns the absolute value of the input</li>
+	<li><em>humanMove </em>-&gt; a procedure for taking human input for a move</li>
+	<li><em>evalMoves </em>-&gt; determines the outcome of the human and robot moves</li>
+	<li><em>moveToStr</em> -&gt; returns the string representation of a move</li>
+	<li><em>playGame</em> -&gt; the function in which the game is player</li>
+	<li><em>main</em> -&gt; controls input and output at start and end of game</li>
+</ul>
+Let's take a closer look at each of these functions in order to better understand how this program works!
+
+The <em>absVal</em> function takes an integer as input and returns the absolute value of it. This simply means that if the input is negative then its positive is returned. If the input is positive then the input is simply returned. There isn't a lot going on here, so it should be easy to understand.
+
+The <em>humanMove </em>function takes no inputs and returns the player's move. This is accomplished by entering an infinite loop and looping until the player enters 1,2, or 3 which correspond to the moves of "Rock", "Paper", and "Scissors". If the player does not enter one of these values then an error message is printed to the terminal and the loop starts from the beginning again.
+
+The <em>evalMoves</em> function takes two integer inputs which correspond to player 1's move and player 2's move. Since we encode the moves as integers where
+<ul>
+	<li>1 --&gt; rock</li>
+	<li>2 --&gt; paper</li>
+	<li>3 --&gt; scissors</li>
+</ul>
+we can then find the difference of the two inputs. The absolute value of the difference (i.e. player 2's move - player 1's move) tells us a lot about whether the victory conditions have been achieved or not. If the difference is 2 or 1 then we know that someone must have won since a difference of 2 means that a rock-scissors pair occurred and a difference of 1 implies that a paper-rock or scissors-paper pair occurred. In any of these cases there is a clear winner and a clear loser. We can then determine who won by using an if-statement which checks for which player had the larger move. We can then return the appropriate player number which corresponds to the victor of the round. Also, if the difference between the two inputs is zero then they must have had the same play and thus the round is a draw and we return 0.
+
+In the <em>moveToStr</em> function, we take an integer <em>n</em><em> </em>as input and return the string representation of the move. Since our input corresponds to one of the three move choices (i.e. 1 -&gt; rock, 2 -&gt; paper, 3 -&gt; scissors) we simply use a switch-statement to return the corresponding string.
+
+The <em>playGame </em>function is where the magic happens. In this function, we take an integer input which is the number of rounds that must be won in order to win the overall game. In the beginning of our function, we initialize five integers which are:
+<ol>
+	<li><em>r </em>:= the player number for the winner of a round</li>
+	<li><em>p1 </em>:= the number of rounds that player 1 has won so far</li>
+	<li><em>p2 </em>:= the number of rounds that player 2 has won so fa</li>
+	<li><em>mP1 </em>:= player 1's move this round</li>
+	<li><em>mP2 </em>:= player 2's move this round</li>
+</ol>
+Additionally, we initialize a random number generator which we bind to the name <em>robotGuess</em> which returns a value in the range [1,2,3] at random. This simulates the computer player's turn. We then enter a while-loop where we continue looping until our loop invariant is satisfied, which is simply that <em>p1 </em>and <em>p2 </em> are still less than our input <em>n</em> which is the number of rounds that must be won before the game is ended. In this function, we print out all of the relevant game information like the current score. We use the <em>humanMove</em> function to get a human move and use our random number generator to get the computer move. We then evaluate the moves with the <em>evalMoves</em> function.  Depending on the outcome of the <em>evalMoves</em> function, we increment the winning player's score and inform the user of the round winner. When the loop invariant is satisfied, we return the winning player.
+
+In our <em>main</em> function, we simply ask the user for the number of rounds we would like a player to have to win in order to win the overall game. We call the <em>playGame</em> function and print to the terminal the winning player and a witty (I think so, anyway) comment. We return zero and the program ceases to execute.
+
+Thanks for reading! Tell me what you think of this game in the comments below!

@@ -1,0 +1,115 @@
+<h2>Daily Program for 5/17/2013</h2>
+Today we will be writing a program to translate English text into Pig Latin. For those who may not know, Pig Latin is a fictitious natural language that young children in the English speaking world sometimes like to use. Essentially, the algorithm for creating Pig Latin sentences from English text is as follows:
+<ul>
+	<li>If the first character in the word is a vowel then an 'ay' is added to the end of the word (aunt -&gt; auntay)</li>
+	<li>If the first character(s) are consonants then all of the characters leading up to the first vowel are pushed to the back of the word and an 'ay' is added to the word (chill -&gt; illchay)</li>
+</ul>
+Although not the most practical problem in the world, this is a fun example of a simple string processing program.
+<h3>Problem Statement for the Pig Latin Translator:</h3>
+Take a sentence as input and convert each word into its Pig Latin equivalent. Additionally, convert all characters to uppercase.
+<h3>Code:</h3>
+[sourcecode language="cpp"]
+#include <iostream>
+#include <string>
+#define ASCII_DELTA 32
+
+bool isUpper(char c) {
+   return (c >= 'A' && c <= 'Z');
+}
+
+std::string toLower(std::string s) {
+   int i;
+   for (i = 0; i < s.length(); ++i) {
+      if (isUpper(s[i])) {
+         s[i] += ASCII_DELTA;
+      }
+   }
+   return s;
+}
+
+bool isVowel(char c) {
+   bool out;
+   switch(c) {
+      case 'a':
+      case 'e':
+      case 'i':
+      case 'o':
+      case 'u':
+         out = true;
+         break;
+      default:
+         out = false;
+         break;
+   }
+   return out;
+}
+
+std::string toPigLatin(std::string eng) {
+   int i;
+   std::string pLatin = "";
+   eng = toLower(eng);
+
+   for (i = 0; i <eng.length(); ++i) {
+      if (isVowel(eng[i])) {
+         pLatin = eng.substr(i, eng.length()) + eng.substr(0, i) + "ay";
+         break;
+      }
+   }
+   return pLatin;
+}
+
+std::string tranlateSentence(std::string sEng) {
+   int i;
+   std::string sPig = "", word;
+
+   do {
+      i = sEng.find(" ");
+      if (i != -1) {
+         word = sEng.substr(0, i);
+         sEng = sEeng.substr(i + 1, sEng.length());
+      }
+      else {
+         word = sEng;
+         sEng = "";
+      }
+      sPig += " " + toPigLatin(word);
+   } while (sEng != "");
+
+   return sPig.substr(1, sPig.length());
+}
+
+int main(int argc, const char *argv[]) {
+   std::string e, p;
+   std::cout << "What is the English sentence you would like translated?\n  -->  ";
+   std::getline(std::cin, e);
+
+   p = translateSentence(e);
+
+   if (p == "") {
+      std::cout << "Sorry, I can't directly translate the sentence '" << e << "'" << std::endl;
+   }
+   else {
+      std::cout << "The English sentence '" << e << "' translates to '" << p << "' in Pig Latin" << std::endl;
+   return 0;
+}
+[/sourcecode]
+<h3>Sample Session:</h3>
+<pre>What is the english sentence you would like translated?
+  --&gt;  Hi I am Braden
+The English sentence 'Hi I am Braden' translates to 'ihay iay amay adenbray' in Pig Latin</pre>
+<h3>Explanation:</h3>
+Our program to take an English sentence and return its Pig Latin equivalent is largely just a composition of functions, so let's take a closer look at each of the functions we use. In addition to this, I should note that we are using the <em>iostream</em> and <em>string </em>headers as well as defining a pre-processor constant called <em>ASCII_DELTA </em>which is simply the difference in the ASCII codes between any given lowercase and uppercase Latin character.
+
+Our first function is <em>isUpper</em> which takes a character as input and returns a boolean representing whether or not the character is an uppercase Latin alphabet character. Since the ASCII code (i.e. numeric) representations of each character are laid out in a linear sequence starting from 'A' and going to 'Z' we can use an inequality to test whether or not any given character is contained within the range.
+
+The next function that we define is the <em>toLower</em> function which takes an std::string and returns the same std::string without any uppercase characters. We do this by iterating through each of the characters in the string and calling <em>isUpper </em>on each one. If <em>isUpper</em> returns a value of <strong></strong><strong>true </strong>then we know that the character is in the uppercase and we convert it to lowercase by adding the pre-processor constant, <em>ASCII_DELTA</em>, to the character. This works since all ASCII characters are simply numbers and the differential between any uppercase ASCII character and its corresponding lowercase ASCII character is 32.
+
+The <em>isVowel</em> function takes a character as input and returns a boolean. It is a pretty simple function that uses a switch-statement and simply checks if the  character is contained in the set {'a', 'e', 'i', 'o', 'u','y'}. If the character is a vowel, then we return true and if else then we return false.
+
+The function <em>toPigLatin</em> contains the core of our translation efforts and takes an std::string as input and returns an std::string. In this function, we initialize a local std::string which will represent our Pig Latin translation of the input word. We iterate through the input string until we reach a vowel as defined by the <em>isVowel</em> function. Once we reach a vowel, we simply use the loop variable as an index to take two substrings of our English input string and rearrange them in accordance to the translation rules of the Pig Latin pseudo-language. This simply means that we take all of the characters after the first vowel and concatenate it with the consonants before the first vowel and the constant 'ay'. We then break the loop and return our Pig Latin string.
+
+Our final function is the <em>translateSentence </em>function which takes and returns an std::string. Unlike the <em>toPigLatin</em> function, the <em>translateSentence</em> function expects a sentence or, in other words, a space delimited string containing multiple words. In this function, we define std::strings for a Pig Latin sentence and an individual word. We enter a do-loop and sequentially extract words and translate them using the <em>toPigLatin</em> function and concatenate them to the Pig Latin sentence. Once we have extracted all of the words in the sentence, the input string will be empty and we will be able to return the Pig Latin sentence and exit the function.
+
+Our main function only uses input/output functions from the STL and so isn't really worthy of note. I hope you enjoyed this simple string processing function! If you ever need to talk to some police from the Vatican (I'm joking) you will now be able to!
+
+Tell me what you think of this program in the comments and, as always, keep on programming!

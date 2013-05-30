@@ -1,0 +1,65 @@
+<h2>Daily Program for 5/15/2013:</h2>
+Today we will be writing a program to compute the number of possible ways an individual could climb a staircase with <em>n</em> steps given that you can only climb steps one at a time or two at a time. For example, with a stair case containing two steps there are only two step sequences which would lead to the climber being at the top of staircase. These possibilities are given by:
+<ol>
+	<li>Two steps of size 1 := 1 step -&gt; 1 step</li>
+	<li>One step of size 2 := 2 steps</li>
+</ol>
+Additionally, a staircase of size three could be surmounted in three different ways which are given by the following sequences.
+<ol>
+	<li>A step of size one and then a step of size 2 := 1 step -&gt; 2 steps</li>
+	<li>Three steps of size 1 := 1 step -&gt; 1 step -&gt; 1 step</li>
+	<li>A step of size two and then a step of size 1 := 2 steps -&gt; 1 step</li>
+</ol>
+As you can see, generating the number of these permutations does not follow the standard <em>n!</em> pattern that immediately springs to mind when one thinks about computing permutations. The code for today isn't terribly complex, but the idea driving the rationale for why this program works is quite interesting, so keep on reading! I guarantee that it will be worth it.
+<h3>Problem Statement for Stair Climbing Permutations:</h3>
+Define a function that takes an integral input which represents the number of steps in the staircase. Here we define steps to be the individual steps not the climber's move size. Given the number of steps in the stair case return the number of possible sequences consisting of two-step moves or one-step moves. Return the number of possible move sequences and display the result to the user. Hint: you may want to think recursively.
+<h3>Code:</h3>
+[sourcecode language="cpp"]
+#include <iostream>
+
+int numPermStairs(int n) {
+   if (n == 1 || n == 0) {
+      return 1;
+   }
+   else {
+      return numPermStairs(n - 1) + numPermStairs(n - 2);
+   }
+}
+
+int altNumPermStairs(int n) {
+   int l1, l2, c, i;
+   l1 = l2 = 1;
+
+   for (i = 0; i < n - 1; ++i) {
+      c = l1 + l2;
+      l2 = l1;
+      l1 = c;
+   }
+   return c;
+}
+
+int main(int argc, const char *argv[]) {
+   int i;
+   std::cout << "How many stairs are in the staircase?\n  -->  ";
+   std::cin >> i;
+
+   std::cout << "With " << i << " stair(s) in the staircase, there are " << numPermStairs(i) << " permutations of one and two step sequences which lead to the top of the staircase" << std::endl;
+   return 0;
+}
+[/sourcecode]
+<h3>Sample Session:</h3>
+<pre>How many stairs are in the staircase?
+  --&gt;  5
+With 5 stair(s) in the staircase, there are 8 permutations 
+of one and two steps sequences which lead to the top of the 
+staircase</pre>
+<h3>Explanation:</h3>
+In our program the main part of our program is the <em>numPermStairs</em> function which takes a single integer as input. You may have scratched your head and said, "Isn't that just a function which returns Fibonacci number?", and you would have been be correct. This function simply computes the value at index <em>n</em> in the Fibonacci sequence and returns the Fibonacci number. Let's take a closer look at this function.
+
+In the <em>numPermStairs</em> function, we take an integer <em>n</em> as input and define a recursive base case where <em>n </em>= 1 or <em>n </em>= 0.  Our recursive case is <em>numPermStairs(n - 1) </em>+ <em>numPermStairs(n </em>- <em>2)</em>. The goal here is to find the number of possible sequences which would lead to reaching the top of the staircase given that the climber can only climb 1 or 2 steps at a time. I heavily encourage you to draw a recursion tree because this part is a little confusing, but the recursive case works by subtracting the input <em>n</em> by both one and two and then calling <em>numPermStairs </em>with each and adding their outputs together. If you're too lazy to draw your own recursion tree, I have included a sample tree below:
+<p style="text-align:center;"><a href="http://bradenlenz.files.wordpress.com/2013/05/wp_20130515_001.jpg"><img alt="WP_20130515_001" src="http://bradenlenz.files.wordpress.com/2013/05/wp_20130515_001.jpg?w=300" width="300" height="168" /></a></p>
+You can think of this as meaning that both possible steps are being taken which lead to different recursive sub-trees. By the time you reach the base step you will have taken a sequence of <em>n </em>- 1's and <em>n </em>- 2's which will lead to a zero or a 1. If the value is zero then this means that the sequence has reached <em>n</em> and if it is 1 then <em>n </em>- 1 has been reached and another 1-step move should be taken. If you then traced the sequence up and added together all of the -1's and -2's plus the base step value then you would get <em>n</em> which means that you have found a sequence of 1 and 2 step moves which would lead you to the top of staircase. Since we are adding together all of the sub-trees we get the total number of paths to the bottom of the recursive tree.
+
+Additionally, I have defined a function called <em>altNumPermStairs</em> which is simply the iterative version of the <em>numPermStairs</em> function. I have defined this function to address the efficiency concerns of the recursive solution since the recursive solution has a run time of O(2^n) which means that it runs in exponential time. The iterative version has a run time of O(n) and runs in polynomial time, which is obviously a massive improvement! If this problem ever comes up in an interview, make sure to implement the iterative solution!
+
+I hope you enjoyed this deceptively simple program! I certainly enjoyed thinking about it! Tell me below what you think of my solution and, more importantly, my explanation! I will be glad to clarify.
