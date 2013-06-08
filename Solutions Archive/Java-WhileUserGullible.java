@@ -23,8 +23,8 @@ class Gullibility {
 		int n = 0;
 		do {
 			n++;
-			System.out.print("\nGive me any integer aside from 0: ");
-			} while (getInt() != 0);
+			System.out.print("Give me any integer aside from 0: ");
+		} while (getInt() != 0);
 		
 		return n;
 	}
