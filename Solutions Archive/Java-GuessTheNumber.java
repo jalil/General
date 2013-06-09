@@ -8,7 +8,7 @@ class GuessTheNumber {
 	public static void main(String[] args) {
 		int numToGuess, uBound, currGuess, guesses = 0;
 
-		System.out.print("What is the what is the upper bound of the range of values you would like to guess?\n  -->  ");
+		System.out.print("What is the upper bound of the range of values you would like to guess?\n  -->  ");
 		uBound = getInt();
 		numToGuess = getRand(uBound);		
 		
@@ -23,7 +23,7 @@ class GuessTheNumber {
 				System.out.println("Your guess was too low.");
 			}
 			else {
-				System.out.println("You are right! The number to guess is " + numToGuess);
+				System.out.println("You are right! The number to guess was " + numToGuess);
 			}
 		} while(currGuess != numToGuess);
 		
