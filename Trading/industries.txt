@@ -1,0 +1,128 @@
+Computer Manufacturing : 10
+Transportation Services : 7
+Other Consumer Services : 28
+Electric Utilities: Central : 4
+Radio And Television Broadcasting And Communications Equipment : 31
+Military/Government/Technical : 16
+Telecommunications Equipment : 88
+Other Transportation : 1
+Finance/Investors Services : 2
+Clothing/Shoe/Accessory Stores : 20
+Business Services : 98
+Computer peripheral equipment : 20
+Plastic Products : 3
+Meat/Poultry/Fish : 2
+Restaurants : 36
+Beverages (Production/Distribution) : 8
+Semiconductors : 112
+Ophthalmic Goods : 2
+Air Freight/Delivery Services : 9
+Specialty Insurers : 9
+Motor Vehicles : 2
+Medical/Nursing Services : 12
+RETAIL: Building Materials : 5
+Commercial Banks : 4
+n/a : 167
+Water Supply : 11
+Packaged Foods : 17
+Coal Mining : 7
+Marine Transportation : 21
+Television Services : 29
+Package Goods/Cosmetics : 4
+Miscellaneous : 2
+Forest Products : 3
+Biotechnology: In Vitro & In Vivo Diagnostic Substances : 17
+Pollution Control Equipment : 4
+Consumer Electronics/Video Chains : 4
+Computer Software: Prepackaged Software : 91
+Oil & Gas Production : 47
+Trucking Freight/Courier Services : 16
+Electrical Products : 41
+Consumer Specialties : 8
+Savings Institutions : 102
+Other Specialty Stores : 27
+Home Furnishings : 13
+Diversified Commercial Services : 11
+Precious Metals : 6
+Shoe Manufacturing : 7
+Environmental Services : 7
+Hospital/Nursing Management : 8
+Building Materials : 3
+Diversified Electronic Products : 1
+Biotechnology: Commercial Physical & Biological Resarch : 17
+industry : 1
+Railroads : 3
+Retail: Computer Software & Peripheral Equipment : 6
+Real Estate : 14
+Professional Services : 22
+Agricultural Chemicals : 1
+Ordnance And Accessories : 2
+Specialty Chemicals : 17
+Metal Fabrications : 25
+Banks : 30
+Consumer Electronics/Appliances : 6
+Major Pharmaceuticals : 195
+Building Products : 3
+EDP Services : 88
+Containers/Packaging : 9
+Medical Specialities : 16
+Homebuilding : 7
+Oil Refining/Marketing : 13
+Electronic Components : 26
+Hotels/Resorts : 13
+Major Banks : 283
+Aerospace : 4
+Rental/Leasing Companies : 3
+Computer Communications Equipment : 17
+Investment Managers : 8
+Medical Electronics : 2
+Real Estate Investment Trusts : 22
+Food Chains : 10
+Fluid Controls : 1
+Broadcasting : 16
+Investment Bankers/Brokers/Service : 24
+Biotechnology: Electromedical & Electrotherapeutic Apparatus : 30
+Biotechnology: Biological Products (No Diagnostic Substances) : 49
+Farming/Seeds/Milling : 14
+Mining & Quarrying of Nonmetallic Minerals (No Fuels) : 1
+Food Distributors : 8
+Books : 1
+Life Insurance : 6
+Specialty Foods : 5
+Miscellaneous manufacturing industries : 5
+Medical/Dental Instruments : 53
+Publishing : 5
+Automotive Aftermarket : 10
+Engineering & Construction : 6
+Major Chemicals : 28
+Accident &Health Insurance : 1
+Industrial Machinery/Components : 101
+Construction/Ag Equipment/Trucks : 3
+Integrated oil Companies : 1
+Computer Software: Programming  Data Processing : 19
+Oilfield Services/Equipment : 3
+Movies/Entertainment : 10
+Auto Parts:O.E.M. : 14
+Paper : 2
+Multi-Sector Companies : 9
+Diversified Financial Services : 1
+Office Equipment/Supplies/Services : 6
+Biotechnology: Laboratory Analytical Instruments : 14
+Aluminum : 1
+Finance: Consumer Services : 20
+Newspapers/Magazines : 4
+Industrial Specialties : 29
+Advertising : 19
+Apparel : 15
+Catalog/Specialty Distribution : 11
+Recreational Products/Toys : 7
+Natural Gas Distribution : 4
+Property-Casualty Insurers : 31
+Services-Misc. Amusement & Recreation : 7
+Steel/Iron Ore : 12
+Auto Manufacturing : 4
+Finance Companies : 5
+Building operators : 5
+Precision Instruments : 3
+Department/Specialty Retail Stores : 10
+Textiles : 1

@@ -1,0 +1,13 @@
+Consumer Durables : 75
+Transportation : 55
+Finance : 574
+Public Utilities : 68
+Energy : 84
+Miscellaneous : 82
+Consumer Non-Durables : 105
+n/a : 167
+Health Care : 413
+Consumer Services : 335
+Basic Industries : 81
+Capital Goods : 190
+Technology : 470
